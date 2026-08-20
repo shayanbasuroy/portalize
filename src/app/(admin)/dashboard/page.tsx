@@ -1,0 +1,142 @@
+import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, FolderKanban, Plus } from "lucide-react";
+import Link from "next/link";
+
+const borders = [
+  "",
+  "border-l border-zinc-200",
+  "border-t border-zinc-200 lg:border-t-0 lg:border-l",
+  "border-t border-l border-zinc-200 lg:border-t-0",
+];
+
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const { data: freelancer } = await supabase
+    .from("freelancers")
+    .select("full_name")
+    .eq("id", user.id)
+    .single();
+
+  const [
+    { count: projectsCount },
+    { count: clientsCount },
+    { count: pendingReviewsCount },
+    { count: paidProjectsCount },
+  ] = await Promise.all([
+    supabase.from("projects").select("*", { count: "exact", head: true }).eq("freelancer_id", user.id),
+    supabase.from("clients").select("*", { count: "exact", head: true }).eq("freelancer_id", user.id),
+    supabase.from("projects").select("*", { count: "exact", head: true }).eq("freelancer_id", user.id).eq("project_status", "in_review"),
+    supabase.from("projects").select("*", { count: "exact", head: true }).eq("freelancer_id", user.id).eq("payment_status", "paid"),
+  ]);
+
+  const { data: recentProjects } = await supabase
+    .from("projects")
+    .select("*, clients(client_name)")
+    .eq("freelancer_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  const stats = [
+    { label: "Total projects", value: projectsCount ?? 0 },
+    { label: "Active clients", value: clientsCount ?? 0 },
+    { label: "Pending review", value: pendingReviewsCount ?? 0 },
+    { label: "Paid projects", value: paidProjectsCount ?? 0 },
+  ];
+
+  return (
+    <div className="space-y-10">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+            Dashboard
+          </p>
+          <h1 className="mt-2 text-2xl font-medium tracking-tight text-[#151B45] sm:text-3xl">
+            Welcome back, {freelancer?.full_name || "Freelancer"}
+          </h1>
+        </div>
+        <Link href="/dashboard/projects/new">
+          <Button className="bg-[#151B45] text-[#F8F7FC] hover:bg-zinc-800">
+            <Plus className="mr-2 h-4 w-4" />
+            New Project
+          </Button>
+        </Link>
+      </div>
+
+      {/* Stats — rule-divided spec index */}
+      <div className="border-y border-zinc-200">
+        <dl className="grid grid-cols-2 lg:grid-cols-4">
+          {stats.map((s, i) => (
+            <div
+              key={s.label}
+              className={`flex flex-col-reverse gap-1.5 px-6 py-8 ${borders[i]}`}
+            >
+              <dt className="font-mono text-[11px] leading-snug text-zinc-500">
+                {s.label}
+              </dt>
+              <dd className="text-3xl font-medium tracking-tight text-[#151B45]">
+                {s.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      {/* Recent projects */}
+      <div>
+        <div className="flex items-center justify-between">
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+            Recent projects
+          </h2>
+          <Link
+            href="/dashboard/projects"
+            className="text-sm text-[#151B45] underline-offset-4 hover:underline"
+          >
+            View all
+          </Link>
+        </div>
+
+        {recentProjects && recentProjects.length > 0 ? (
+          <div className="mt-4 divide-y divide-zinc-200 border-t border-zinc-200">
+            {recentProjects.map((p) => (
+              <Link
+                key={p.id}
+                href={`/dashboard/projects/${p.id}`}
+                className="group flex items-center gap-4 py-4"
+              >
+                <span className="flex size-9 shrink-0 items-center justify-center border border-zinc-200 text-[#151B45]">
+                  <FolderKanban className="size-4" strokeWidth={1.75} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-[#151B45] group-hover:underline">
+                    {p.title}
+                  </p>
+                  <p className="truncate font-mono text-[11px] text-zinc-400">
+                    {p.clients?.client_name || "No client"}
+                  </p>
+                </div>
+                <span
+                  className={`shrink-0 font-mono text-[11px] ${
+                    p.payment_status === "paid" ? "text-emerald-600" : "text-amber-600"
+                  }`}
+                >
+                  {p.payment_status === "paid" ? "Paid" : "Unpaid"}
+                </span>
+                <ArrowRight className="size-4 shrink-0 text-zinc-400 transition-colors group-hover:text-[#151B45]" />
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 border-t border-zinc-200 pt-4 text-sm text-zinc-500">
+            No projects yet. Create your first one to get started.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}

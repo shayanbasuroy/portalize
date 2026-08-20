@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Supabase local CLI state (project ref, pooler URL)
+supabase/.temp/
+
+# Claude Code local (per-machine) settings
+.claude/settings.local.json
+
+# Re-include the safe env example (no secrets)
+!.env.local.example
