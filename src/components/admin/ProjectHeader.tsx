@@ -2,10 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/admin/CopyButton";
-import { togglePaymentStatus, deleteProjectAction } from "@/app/actions/projects";
+import {
+  togglePaymentStatus,
+  deleteProjectAction,
+  toggleWatermarkAction,
+  regeneratePinAction,
+} from "@/app/actions/projects";
 import { vibrate } from "@/lib/haptics";
-import { Trash2, AlertCircle } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { Trash2 } from "lucide-react";
 
 const statusLabels: Record<string, string> = {
   in_review: "In review",
@@ -16,13 +20,12 @@ const statusLabels: Record<string, string> = {
 export function ProjectHeader({
   project,
   portalBaseUrl,
+  pin,
 }: {
   project: any;
   portalBaseUrl: string;
+  pin?: string | null;
 }) {
-  const searchParams = useSearchParams();
-  const newlyCreatedPin = searchParams.get("pin");
-
   const portalLink = `${portalBaseUrl}/p/${project.slug}`;
   const status = statusLabels[project.project_status] || project.project_status;
   const isPaid = project.payment_status === "paid";
@@ -69,24 +72,52 @@ export function ProjectHeader({
               </p>
             </div>
 
-            {newlyCreatedPin && (
-              <div className="border border-amber-200 bg-amber-50/60 px-3 py-2.5">
-                <div className="flex items-center justify-between">
-                  <p className="flex items-center gap-1.5 font-mono text-[11px] text-amber-800">
-                    <AlertCircle className="h-3.5 w-3.5" />
-                    Access PIN
-                  </p>
-                  <CopyButton text={newlyCreatedPin} className="h-6 w-6" />
-                </div>
-                <p className="mt-1 font-mono text-lg tracking-wider text-[#151B45]">
-                  {newlyCreatedPin}
+            <div className="border-t border-zinc-100 pt-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-400">
+                  Access PIN
                 </p>
-                <p className="mt-0.5 text-xs text-amber-700">
-                  Save this PIN and send it to your client. It will not be shown
-                  again.
+                <form action={regeneratePinAction}>
+                  <input type="hidden" name="id" value={project.id} />
+                  <Button type="submit" variant="outline" size="sm">
+                    Regenerate
+                  </Button>
+                </form>
+              </div>
+              {pin ? (
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="font-mono text-lg tracking-wider text-[#151B45]">
+                    {pin}
+                  </span>
+                  <CopyButton text={pin} className="h-6 w-6" />
+                </div>
+              ) : (
+                <p className="mt-2 text-xs text-zinc-400">
+                  No PIN yet — regenerate to create one you can copy.
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-[#151B45]">Watermark previews</p>
+                <p className="font-mono text-[11px] text-zinc-400">
+                  {project.watermark_enabled ? "On" : "Off"} · unpaid previews are
+                  watermarked until marked paid
                 </p>
               </div>
-            )}
+              <form action={toggleWatermarkAction}>
+                <input type="hidden" name="id" value={project.id} />
+                <input
+                  type="hidden"
+                  name="current"
+                  value={String(project.watermark_enabled)}
+                />
+                <Button type="submit" variant="outline" size="sm">
+                  {project.watermark_enabled ? "Turn off" : "Turn on"}
+                </Button>
+              </form>
+            </div>
 
             <div className="flex gap-2 border-t border-zinc-100 pt-4">
               <form action={togglePaymentStatus} className="flex-1">

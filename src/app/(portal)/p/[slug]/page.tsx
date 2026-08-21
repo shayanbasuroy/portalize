@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound, redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
+import { verifyPortalSessionToken } from '@/lib/session'
 import { PortalView } from '@/components/portal/PortalView'
 
 interface PortalPageProps {
@@ -44,11 +45,11 @@ async function enrichDeliverablesWithPreviewUrls(deliverables: any[]) {
 export default async function PortalPage({ params }: PortalPageProps) {
   const { slug } = await params
 
-  // Verify session cookie
+  // Verify session cookie (HMAC-signed token)
   const cookieStore = await cookies()
   const sessionCookie = cookieStore.get(`client_session_${slug}`)
 
-  if (!sessionCookie || sessionCookie.value !== 'verified') {
+  if (!sessionCookie || !(await verifyPortalSessionToken(slug, sessionCookie.value))) {
     redirect(`/p/${slug}/auth`)
   }
 

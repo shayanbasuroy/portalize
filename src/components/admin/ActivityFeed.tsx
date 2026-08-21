@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { Eye, MessageSquare, CheckCircle2, ShieldCheck } from "lucide-react";
 import { formatRelativeTime } from "@/lib/format";
 
@@ -7,20 +10,53 @@ const icons = {
   changes_requested: MessageSquare,
   deliverable_approved: CheckCircle2,
   project_approved: ShieldCheck,
+  deliverable_previewed: Eye,
 } as const;
 
+type ActivityEvent = {
+  id: string;
+  event_type: string;
+  detail: string | null;
+  created_at: string;
+};
+
 /**
- * Read receipts / activity feed. Queries the event log server-side; degrades
- * to an empty state if the table isn't present yet (migration not applied).
+ * Read receipts / activity feed. Renders the server-fetched events and then
+ * subscribes to Supabase Realtime so new client activity appears live.
  */
-export async function ActivityFeed({ projectId }: { projectId: string }) {
-  const supabase = await createClient();
-  const { data: events } = await supabase
-    .from("activity_events")
-    .select("*")
-    .eq("project_id", projectId)
-    .order("created_at", { ascending: false })
-    .limit(20);
+export function ActivityFeed({
+  projectId,
+  initialEvents,
+}: {
+  projectId: string;
+  initialEvents: ActivityEvent[];
+}) {
+  const [events, setEvents] = useState(initialEvents);
+
+  useEffect(() => {
+    if (!projectId) return;
+
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`activity-${projectId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "activity_events",
+          filter: `project_id=eq.${projectId}`,
+        },
+        (payload) => {
+          setEvents((prev) => [payload.new as ActivityEvent, ...prev]);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [projectId]);
 
   return (
     <div>

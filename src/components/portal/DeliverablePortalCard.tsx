@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Download,
@@ -18,7 +18,7 @@ import { ImageViewer } from '../previewers/ImageViewer'
 import { EmbedViewer } from '../previewers/EmbedViewer'
 import { WatermarkOverlay } from './WatermarkOverlay'
 import { FeedbackDrawer } from './FeedbackDrawer'
-import { approveDeliverableAction } from '@/app/actions/portal'
+import { approveDeliverableAction, logPreviewAction } from '@/app/actions/portal'
 import { vibrate } from '@/lib/haptics'
 
 const CodeViewer = dynamic(
@@ -60,6 +60,19 @@ interface DeliverablePortalCardProps {
 
 export function DeliverablePortalCard({ deliverable, project }: DeliverablePortalCardProps) {
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const loggedPreview = useRef(false)
+
+  // Log a granular read receipt once per card mount (the client rendered this
+  // deliverable's preview). The ref guards against double-logging on re-renders.
+  useEffect(() => {
+    if (loggedPreview.current) return
+    loggedPreview.current = true
+    const form = new FormData()
+    form.set('deliverableId', deliverable.id)
+    form.set('slug', project.slug)
+    logPreviewAction(form)
+  }, [deliverable.id, project.slug])
+
   const isPaid = project.payment_status === 'paid'
   const isApproved = deliverable.status === 'approved'
   const TypeIcon = typeIcons[deliverable.deliverable_type as keyof typeof typeIcons] ?? FileArchive

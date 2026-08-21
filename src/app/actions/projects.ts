@@ -47,10 +47,11 @@ export async function createProjectAction(prevState: any, formData: FormData) {
 
   if (error) return { error: error.message };
 
-  // Note: we would normally display the PIN to the user once here or send it via email.
-  // For the sake of this implementation, we will pass it via query param or store it in flash session.
-  
-  redirect(`/dashboard/projects/${project.id}?pin=${pin}`);
+  // Store the plaintext PIN in a freelancer-only table so it can be shown and
+  // copied from the dashboard. `access_pin` stays hashed for client checks.
+  await supabase.from("project_pins").insert({ project_id: project.id, pin });
+
+  redirect(`/dashboard/projects/${project.id}`);
 }
 
 export async function togglePaymentStatus(formData: FormData): Promise<void> {
@@ -70,6 +71,50 @@ export async function togglePaymentStatus(formData: FormData): Promise<void> {
     .eq("freelancer_id", user.id);
 
   if (error) throw new Error(error.message);
+
+  revalidatePath(`/dashboard/projects/${id}`);
+}
+
+export async function toggleWatermarkAction(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Not authenticated");
+
+  const id = formData.get("id") as string;
+  const current = formData.get("current") === "true";
+  const next = !current;
+
+  const { error } = await supabase
+    .from("projects")
+    .update({ watermark_enabled: next })
+    .eq("id", id)
+    .eq("freelancer_id", user.id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/dashboard/projects/${id}`);
+}
+
+export async function regeneratePinAction(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Not authenticated");
+
+  const id = formData.get("id") as string;
+  const pin = generatePin();
+  const hashedPin = await hashPin(pin);
+
+  const { error } = await supabase
+    .from("projects")
+    .update({ access_pin: hashedPin })
+    .eq("id", id)
+    .eq("freelancer_id", user.id);
+
+  if (error) throw new Error(error.message);
+
+  await supabase.from("project_pins").upsert({ project_id: id, pin });
 
   revalidatePath(`/dashboard/projects/${id}`);
 }

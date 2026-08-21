@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
+import { verifyPortalSessionToken } from '@/lib/session'
 
 // Next.js 16 renamed the `middleware` file convention to `proxy`.
 export async function proxy(request: NextRequest) {
@@ -25,13 +26,13 @@ export async function proxy(request: NextRequest) {
   }
 
   // --- Client Portal Auth ---
-  // A verified session cookie is HTTP-only, SameSite=strict, and only ever set
-  // to 'verified' after a successful PIN check.
+  // A verified session cookie is HTTP-only, SameSite=strict, and carries an
+  // HMAC-signed token only after a successful PIN check.
   const portalMatch = pathname.match(/^\/p\/([^\/]+)$/)
   if (portalMatch) {
     const slug = portalMatch[1]
     const sessionCookie = request.cookies.get(`client_session_${slug}`)
-    if (!sessionCookie || sessionCookie.value !== 'verified') {
+    if (!sessionCookie || !(await verifyPortalSessionToken(slug, sessionCookie.value))) {
       return NextResponse.redirect(new URL(`/p/${slug}/auth`, request.url))
     }
   }

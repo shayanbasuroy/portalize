@@ -31,11 +31,26 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
     .eq("project_id", project.id)
     .order("created_at", { ascending: false });
 
+  const { data: activityEvents } = await supabase
+    .from("activity_events")
+    .select("*")
+    .eq("project_id", project.id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
   const portalBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+  // Plaintext PIN for the dashboard (freelancer-only table; may be null for
+  // projects created before the migration — they regenerate to reveal one).
+  const { data: pinRow } = await supabase
+    .from("project_pins")
+    .select("pin")
+    .eq("project_id", project.id)
+    .single();
 
   return (
     <div className="space-y-8 pb-12">
-      <ProjectHeader project={project} portalBaseUrl={portalBaseUrl} />
+      <ProjectHeader project={project} portalBaseUrl={portalBaseUrl} pin={pinRow?.pin ?? null} />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-10 lg:col-span-2">
@@ -55,7 +70,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
             </div>
           </div>
 
-          <ActivityFeed projectId={project.id} />
+          <ActivityFeed projectId={project.id} initialEvents={activityEvents || []} />
         </div>
 
         <div>

@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { cookies, headers } from 'next/headers'
 import { verifyPin } from '@/lib/security'
+import {
+  createPortalSessionToken,
+  verifyPortalSessionToken,
+} from '@/lib/session'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { isRateLimited, recordFailure, clearFailures } from '@/lib/rate-limit'
@@ -28,11 +32,14 @@ async function getClientIp(): Promise<string> {
   )
 }
 
-// Validate the HTTP-only portal session cookie. Client mutations are guarded by
-// this so a direct POST without a verified PIN session is a no-op.
+// Validate the HMAC-signed HTTP-only portal session cookie. Client mutations
+// are guarded by this so a direct POST without a verified PIN session is a
+// no-op, and the token cannot be forged by hand.
 async function verifyPortalSession(slug: string): Promise<boolean> {
   const cookieStore = await cookies()
-  return cookieStore.get(`client_session_${slug}`)?.value === 'verified'
+  const token = cookieStore.get(`client_session_${slug}`)?.value
+  if (!token) return false
+  return verifyPortalSessionToken(slug, token)
 }
 
 type ActivityEvent =
@@ -40,6 +47,7 @@ type ActivityEvent =
   | 'changes_requested'
   | 'deliverable_approved'
   | 'project_approved'
+  | 'deliverable_previewed'
 
 // Record a read-receipt / activity event. Uses the service role so anon portal
 // visitors can write without an open UPDATE grant on projects.
@@ -77,7 +85,7 @@ export async function verifyPinAction(
   // PRD §6.2 — brute-force protection: max 5 failed attempts/min per IP+slug.
   const ip = await getClientIp()
   const rateKey = `${slug}:${ip}`
-  if (isRateLimited(rateKey)) {
+  if (await isRateLimited(rateKey)) {
     return {
       success: false,
       message: 'Too many incorrect attempts. Please wait a minute and try again.',
@@ -97,15 +105,16 @@ export async function verifyPinAction(
 
   const isValid = await verifyPin(pin, project.access_pin)
   if (!isValid) {
-    recordFailure(rateKey)
+    await recordFailure(rateKey)
     return { success: false, message: 'Invalid PIN. Please try again.' }
   }
 
-  clearFailures(rateKey)
+  await clearFailures(rateKey)
 
-  // Set HTTP-only session cookie
+  // Set HTTP-only session cookie with a signed, expiring token.
+  const token = await createPortalSessionToken(slug)
   const cookieStore = await cookies()
-  cookieStore.set(`client_session_${slug}`, 'verified', {
+  cookieStore.set(`client_session_${slug}`, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
@@ -250,4 +259,30 @@ export async function approveProjectAction(
   await sendApprovalNotification(projectId, null)
 
   revalidatePath(`/p/${slug}`)
+}
+
+// Record that the client viewed a specific deliverable's preview (granular read
+// receipt). Fired once per deliverable card mount on the portal.
+export async function logPreviewAction(formData: FormData): Promise<void> {
+  const deliverableId = formData.get('deliverableId') as string
+  const slug = formData.get('slug') as string
+
+  if (!deliverableId || !slug) return
+  if (!(await verifyPortalSession(slug))) return
+
+  const admin = createAdminClient()
+  const { data: deliverable } = await admin
+    .from('deliverables')
+    .select('project_id, title')
+    .eq('id', deliverableId)
+    .single()
+
+  if (deliverable) {
+    await logActivity(
+      deliverable.project_id,
+      'deliverable_previewed',
+      `Client previewed ${deliverable.title}`,
+      deliverableId
+    )
+  }
 }

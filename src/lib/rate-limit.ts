@@ -1,49 +1,92 @@
-// In-memory sliding-window rate limiter for PIN verification.
+// Sliding-window rate limiter for PIN verification (PRD §6.2: max 5 failed
+// attempts per minute per IP+slug).
 //
-// PRD §6.2: enforce 5 failed attempts per minute per IP to prevent brute-forcing
-// 4-digit PINs. This is a per-instance limiter — for multi-instance/serverless
-// production deployments, back it with Redis or a database table.
+// Backed by the `pin_attempts` table so it survives across serverless
+// instances (an in-memory map resets on every cold start). Falls back to a
+// per-instance in-memory limiter if the table isn't present or the DB is
+// unreachable, so the portal still works before the migration is applied.
 
-const WINDOW_MS = 60_000
-const MAX_FAILURES = 5
+import { createAdminClient } from "@/lib/supabase/admin";
 
-const failures = new Map<string, number[]>()
+const WINDOW_MS = 60_000;
+const MAX_FAILURES = 5;
+
+/* ---------------------------- in-memory fallback ---------------------------- */
+
+const failures = new Map<string, number[]>();
 
 function recentFailures(key: string, now: number): number[] {
-  const list = failures.get(key) || []
-  const filtered = list.filter((t) => now - t < WINDOW_MS)
+  const list = failures.get(key) || [];
+  const filtered = list.filter((t) => now - t < WINDOW_MS);
   if (filtered.length !== list.length) {
-    if (filtered.length === 0) failures.delete(key)
-    else failures.set(key, filtered)
+    if (filtered.length === 0) failures.delete(key);
+    else failures.set(key, filtered);
   }
-  return filtered
+  return filtered;
 }
 
-export function isRateLimited(key: string): boolean {
-  const now = Date.now()
-  return recentFailures(key, now).length >= MAX_FAILURES
+function memIsRateLimited(key: string): boolean {
+  return recentFailures(key, Date.now()).length >= MAX_FAILURES;
 }
 
-export function recordFailure(key: string): void {
-  const now = Date.now()
-  const list = recentFailures(key, now)
-  list.push(now)
-  failures.set(key, list)
+function memRecordFailure(key: string): void {
+  const now = Date.now();
+  const list = recentFailures(key, now);
+  list.push(now);
+  failures.set(key, list);
 }
 
-export function clearFailures(key: string): void {
-  failures.delete(key)
+function memClearFailures(key: string): void {
+  failures.delete(key);
 }
 
-// Best-effort cleanup so the map never grows unbounded.
+/* ------------------------------- public API ------------------------------- */
+
+export async function isRateLimited(key: string): Promise<boolean> {
+  try {
+    const admin = createAdminClient();
+    const since = new Date(Date.now() - WINDOW_MS).toISOString();
+    const { count, error } = await admin
+      .from("pin_attempts")
+      .select("id", { count: "exact", head: true })
+      .eq("key", key)
+      .gte("created_at", since);
+    if (!error) return (count ?? 0) >= MAX_FAILURES;
+  } catch {
+    // fall through to memory
+  }
+  return memIsRateLimited(key);
+}
+
+export async function recordFailure(key: string): Promise<void> {
+  memRecordFailure(key);
+  try {
+    const admin = createAdminClient();
+    await admin.from("pin_attempts").insert({ key });
+  } catch {
+    // memory fallback already recorded
+  }
+}
+
+export async function clearFailures(key: string): Promise<void> {
+  memClearFailures(key);
+  try {
+    const admin = createAdminClient();
+    await admin.from("pin_attempts").delete().eq("key", key);
+  } catch {
+    // ignore
+  }
+}
+
+// Best-effort memory cleanup so the fallback map never grows unbounded.
 const cleanup = setInterval(() => {
-  const now = Date.now()
+  const now = Date.now();
   for (const [key] of failures) {
-    recentFailures(key, now)
+    recentFailures(key, now);
   }
-}, WINDOW_MS)
+}, WINDOW_MS);
 
 // Don't let the cleanup timer keep the serverless/Node process alive.
-if (typeof cleanup.unref === 'function') {
-  cleanup.unref()
+if (typeof cleanup.unref === "function") {
+  cleanup.unref();
 }

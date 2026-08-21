@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { verifyPortalSessionToken } from '@/lib/session'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -10,9 +11,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing parameters' }, { status: 400 })
   }
 
-  // Verify client session cookie
+  // Verify client session cookie (HMAC-signed token)
   const sessionCookie = request.cookies.get(`client_session_${slug}`)
-  if (!sessionCookie) {
+  if (!sessionCookie || !(await verifyPortalSessionToken(slug, sessionCookie.value))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
   }
 
