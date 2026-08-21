@@ -334,5 +334,3 @@ Here's the pitch in a nutshell:
 **Stack:** Next.js App Router + Server Actions, Tailwind/shadcn, Supabase for everything backend (Postgres + RLS, private Storage buckets, Realtime, Auth for the freelancer side only — clients never touch Supabase Auth, just PIN-gated cookies).
 
 Basically: Calendly-simple client experience, DocSend-style controlled viewing, with a payment trigger baked into the download flow instead of bolted on separately.
-
-

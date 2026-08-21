@@ -48,3 +48,10 @@ supabase/.temp/
 
 # Re-include the safe env example (no secrets)
 !.env.local.example
+
+# Agent / assistant tooling — local only, not part of the shipped app
+.agents/
+.claude/
+.codex/
+skills-lock.json
+changes.md
