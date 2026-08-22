@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { PinAuthForm } from '@/components/portal/PinAuthForm'
 import { asSingle } from '@/lib/utils'
 
@@ -9,9 +9,9 @@ interface AuthPageProps {
 
 export default async function PortalAuthPage({ params }: AuthPageProps) {
   const { slug } = await params
-  const supabase = await createClient()
+  const admin = createAdminClient()
 
-  const { data: project, error } = await supabase
+  const { data: project, error } = await admin
     .from('projects')
     .select('title, freelancers(logo_url, brand_color, business_name)')
     .eq('slug', slug)

@@ -1,6 +1,5 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { cookies, headers } from 'next/headers'
 import { verifyPin } from '@/lib/security'
@@ -92,8 +91,10 @@ export async function verifyPinAction(
     }
   }
 
-  const supabase = await createClient()
-  const { data: project, error } = await supabase
+  // Service role: the client is anonymous; the hashed PIN is verified
+  // server-side (guarded by rate limiting) and never reaches the browser.
+  const admin = createAdminClient()
+  const { data: project, error } = await admin
     .from('projects')
     .select('id, access_pin')
     .eq('slug', slug)

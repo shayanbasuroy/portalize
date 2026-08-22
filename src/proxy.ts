@@ -27,29 +27,25 @@ export async function proxy(request: NextRequest) {
 
   // --- Client Portal Auth ---
   // A verified session cookie is HTTP-only, SameSite=strict, and carries an
-  // HMAC-signed token only after a successful PIN check.
-  const portalMatch = pathname.match(/^\/p\/([^\/]+)$/)
-  if (portalMatch) {
-    const slug = portalMatch[1]
-    const sessionCookie = request.cookies.get(`client_session_${slug}`)
-    if (!sessionCookie || !(await verifyPortalSessionToken(slug, sessionCookie.value))) {
-      return NextResponse.redirect(new URL(`/p/${slug}/auth`, request.url))
+  // HMAC-signed token only after a successful PIN check. Gate the portal view
+  // (`/p/[slug]`) but not the PIN-entry page (`/p/[slug]/auth`).
+  if (pathname.startsWith('/p/')) {
+    const slug = pathname.split('/')[2]
+    if (slug && !pathname.endsWith('/auth')) {
+      const sessionCookie = request.cookies.get(`client_session_${slug}`)
+      if (!sessionCookie || !(await verifyPortalSessionToken(slug, sessionCookie.value))) {
+        return NextResponse.redirect(new URL(`/p/${slug}/auth`, request.url))
+      }
     }
-  }
-
-  // For the OAuth callback, skip the session refresh to avoid redirect loops.
-  if (pathname.startsWith('/auth/callback')) {
     return NextResponse.next()
   }
 
-  const { response } = await updateSession(request)
-  return response
+  return NextResponse.next()
 }
 
+// Only run on routes that actually need auth handling. Every other request
+// (marketing landing page, assets, API, OAuth callback) skips the proxy so it
+// never pays for an unnecessary `supabase.auth.getUser()` round-trip.
 export const config = {
-  matcher: [
-    // Exclude API routes (they handle their own auth), static files, image
-    // optimization, and media assets.
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'
-  ]
+  matcher: ['/dashboard/:path*', '/login', '/signup', '/p/:path*'],
 }

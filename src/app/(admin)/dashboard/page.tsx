@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, FolderKanban, Plus } from "lucide-react";
 import Link from "next/link";
@@ -12,7 +12,7 @@ const borders = [
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) return null;
 

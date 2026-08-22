@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { ProjectHeader } from "@/components/admin/ProjectHeader";
 import { DeliverableCard } from "@/components/admin/DeliverableCard";
@@ -8,16 +8,21 @@ import { FileUploader } from "@/components/admin/FileUploader";
 import { CodeSnippetForm } from "@/components/admin/CodeSnippetForm";
 import { LinkEmbedForm } from "@/components/admin/LinkEmbedForm";
 
-export default async function ProjectDetailPage({ params }: { params: { id: string } }) {
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) return null;
 
   const { data: project, error } = await supabase
     .from("projects")
     .select("*, clients(*)")
-    .eq("id", params.id)
+    .eq("id", id)
     .eq("freelancer_id", user.id)
     .single();
 

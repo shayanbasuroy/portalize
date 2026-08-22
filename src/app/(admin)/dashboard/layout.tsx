@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/admin/Sidebar";
 
 export default async function AdminLayout({
@@ -8,9 +8,9 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
-  if (error || !user) {
+  if (!user) {
     redirect("/login");
   }
 

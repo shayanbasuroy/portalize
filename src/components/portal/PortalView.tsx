@@ -1,8 +1,6 @@
 'use client'
 
 import React from 'react'
-import { useRealtimeProject } from '@/hooks/useRealtimeProject'
-import { useRealtimeDeliverables } from '@/hooks/useRealtimeDeliverables'
 import { PaymentBanner } from './PaymentBanner'
 import { DeliverablePortalCard } from './DeliverablePortalCard'
 import { Button } from '@/components/ui/button'
@@ -22,10 +20,12 @@ const statusLabels: Record<string, string> = {
 }
 
 export function PortalView({ initialProject, initialDeliverables }: PortalViewProps) {
-  // Live state: Supabase Realtime re-renders when the freelancer flips
-  // payment_status (unlocking downloads) or a deliverable is approved.
-  const project = useRealtimeProject(initialProject)
-  const deliverables = useRealtimeDeliverables(initialProject.id, initialDeliverables)
+  // Server-rendered state. Client mutations flow through Server Actions
+  // (approve / feedback) which `revalidatePath` this route, so the portal
+  // re-renders with fresh data. It no longer subscribes to Realtime as `anon`
+  // because the client-portal tables are no longer anon-readable.
+  const project = initialProject
+  const deliverables = initialDeliverables
 
   if (!project) return null
 

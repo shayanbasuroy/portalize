@@ -1,5 +1,4 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound, redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
@@ -53,11 +52,14 @@ export default async function PortalPage({ params }: PortalPageProps) {
     redirect(`/p/${slug}/auth`)
   }
 
-  const supabase = await createClient()
+  // Service role: the client is anonymous, and this read is gated by the
+  // verified session cookie above. `access_pin` is deliberately excluded from
+  // what reaches the browser.
+  const admin = createAdminClient()
 
-  const { data: project, error } = await supabase
+  const { data: project, error } = await admin
     .from('projects')
-    .select('*, freelancers(*), deliverables(*, feedback_comments(*))')
+    .select('id, slug, title, project_status, payment_status, watermark_enabled, freelancers(business_name, logo_url, brand_color), deliverables(*, feedback_comments(*))')
     .eq('slug', slug)
     .single()
 

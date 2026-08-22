@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import { asSingle } from '@/lib/utils'
 import React from 'react'
@@ -10,9 +10,12 @@ interface PortalLayoutProps {
 
 export default async function PortalLayout({ children, params }: PortalLayoutProps) {
   const { slug } = await params
-  const supabase = await createClient()
+  // Service role: the client is anonymous, so reading `freelancers` branding via
+  // the anon role returns null (no anon policy on that table). The service role
+  // bypasses RLS and is safe here because this is a server-only render.
+  const admin = createAdminClient()
 
-  const { data: project, error } = await supabase
+  const { data: project, error } = await admin
     .from('projects')
     .select('freelancers(brand_color)')
     .eq('slug', slug)

@@ -1,11 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { AddClientDialog } from "@/components/admin/AddClientDialog";
 import { ClientActions } from "@/components/admin/ClientActions";
 import { Users } from "lucide-react";
 
 export default async function ClientsPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) return null;
 

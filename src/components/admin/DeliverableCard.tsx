@@ -49,10 +49,10 @@ export function DeliverableCard({ deliverable }: { deliverable: any }) {
       </span>
 
       <div className="flex shrink-0 items-center gap-1">
-        {deliverable.feedback && deliverable.feedback.length > 0 && (
+        {deliverable.feedback_comments && deliverable.feedback_comments.length > 0 && (
           <Button variant="ghost" size="sm" className="text-zinc-500">
             <MessageSquare className="mr-1.5 h-4 w-4" />
-            {deliverable.feedback.length}
+            {deliverable.feedback_comments.length}
           </Button>
         )}
         <form action={deleteDeliverableAction}>

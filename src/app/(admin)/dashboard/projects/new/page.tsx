@@ -1,9 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
+import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { NewProjectForm } from "./NewProjectForm";
 
 export default async function NewProjectPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) return null;
 
@@ -26,6 +27,19 @@ export default async function NewProjectPage() {
           Set up a private portal your client can access with a 4-digit PIN.
         </p>
       </div>
+
+      {(clients?.length ?? 0) === 0 && (
+        <div className="border border-amber-200 bg-amber-50/60 px-4 py-3 text-sm text-amber-800">
+          You need at least one client before creating a project.{" "}
+          <Link
+            href="/dashboard/clients"
+            className="font-medium underline underline-offset-4"
+          >
+            Add a client first
+          </Link>
+          .
+        </div>
+      )}
 
       <div className="border border-zinc-200 bg-white p-6">
         <NewProjectForm clients={clients || []} />

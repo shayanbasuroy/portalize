@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { FolderKanban, Plus } from "lucide-react";
 import Link from "next/link";
@@ -18,7 +18,7 @@ function statusLabel(status: string) {
 
 export default async function ProjectsPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) return null;
 
