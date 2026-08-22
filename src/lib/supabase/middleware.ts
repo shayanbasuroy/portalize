@@ -21,6 +21,10 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
-  return { response, user }
+  // `getSession()` decodes the JWT locally — no network round-trip — which is
+  // all the proxy needs to gate `/dashboard` and redirect logged-in users off
+  // `/login`/`/signup`. Full validation + token refresh happens in the page via
+  // `getUser()` (see `getCurrentUser`), so an expired token still redirects.
+  const { data: { session } } = await supabase.auth.getSession()
+  return { response, user: session?.user ?? null }
 }
