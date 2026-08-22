@@ -2,6 +2,25 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { verifyPortalSessionToken } from '@/lib/session'
 
+// Map a code language to a file extension for code downloads.
+const CODE_EXTENSIONS: Record<string, string> = {
+  typescript: 'ts',
+  javascript: 'js',
+  jsx: 'jsx',
+  tsx: 'tsx',
+  html: 'html',
+  css: 'css',
+  python: 'py',
+  json: 'json',
+  sql: 'sql',
+  bash: 'sh',
+  shell: 'sh',
+}
+
+function safeFilename(name: string): string {
+  return name.replace(/[^a-zA-Z0-9._-]/g, '_')
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const deliverableId = searchParams.get('deliverableId')
@@ -47,10 +66,29 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  // Generate signed download URL (5 min expiry)
+  // Code deliverables are stored inline (no storage object), so stream the
+  // source as a downloadable file rather than trying to sign a null path.
+  if (deliverable.deliverable_type === 'code') {
+    const ext = CODE_EXTENSIONS[deliverable.code_language] || 'txt'
+    const filename = safeFilename(`${deliverable.title || 'code'}.${ext}`)
+    return new NextResponse(deliverable.code_content || '', {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+      },
+    })
+  }
+
+  if (!deliverable.content_url) {
+    return NextResponse.json({ error: 'Deliverable not found' }, { status: 404 })
+  }
+
+  // Generate signed download URL (5 min expiry) with the original filename.
   const { data: signedUrlData, error: storageError } = await supabase.storage
     .from('deliverables-bucket')
-    .createSignedUrl(deliverable.content_url, 300, { download: true })
+    .createSignedUrl(deliverable.content_url, 300, {
+      download: safeFilename(deliverable.title || 'download'),
+    })
 
   if (storageError || !signedUrlData) {
     return NextResponse.json({ error: 'Failed to generate download link' }, { status: 500 })

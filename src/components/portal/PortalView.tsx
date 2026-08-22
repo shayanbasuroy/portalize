@@ -1,6 +1,7 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { PaymentBanner } from './PaymentBanner'
 import { DeliverablePortalCard } from './DeliverablePortalCard'
 import { Button } from '@/components/ui/button'
@@ -22,8 +23,16 @@ const statusLabels: Record<string, string> = {
 export function PortalView({ initialProject, initialDeliverables }: PortalViewProps) {
   // Server-rendered state. Client mutations flow through Server Actions
   // (approve / feedback) which `revalidatePath` this route, so the portal
-  // re-renders with fresh data. It no longer subscribes to Realtime as `anon`
-  // because the client-portal tables are no longer anon-readable.
+  // re-renders with fresh data. The tables are no longer anon-readable (RLS is
+  // locked down), so instead of Realtime we poll `router.refresh()` to pick up
+  // the freelancer's changes (e.g. "Mark as Paid" unlocking downloads) without
+  // a manual reload.
+  const router = useRouter()
+  useEffect(() => {
+    const id = setInterval(() => router.refresh(), 20000)
+    return () => clearInterval(id)
+  }, [router])
+
   const project = initialProject
   const deliverables = initialDeliverables
 

@@ -1,4 +1,5 @@
 import { createClient, getCurrentUser } from "@/lib/supabase/server";
+import { asSingle } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, FolderKanban, Plus } from "lucide-react";
 import Link from "next/link";
@@ -16,36 +17,36 @@ export default async function DashboardPage() {
 
   if (!user) return null;
 
-  const { data: freelancer } = await supabase
-    .from("freelancers")
-    .select("full_name")
-    .eq("id", user.id)
-    .single();
-
-  const [
-    { count: projectsCount },
-    { count: clientsCount },
-    { count: pendingReviewsCount },
-    { count: paidProjectsCount },
-  ] = await Promise.all([
-    supabase.from("projects").select("*", { count: "exact", head: true }).eq("freelancer_id", user.id),
-    supabase.from("clients").select("*", { count: "exact", head: true }).eq("freelancer_id", user.id),
-    supabase.from("projects").select("*", { count: "exact", head: true }).eq("freelancer_id", user.id).eq("project_status", "in_review"),
-    supabase.from("projects").select("*", { count: "exact", head: true }).eq("freelancer_id", user.id).eq("payment_status", "paid"),
+  // Single parallel round-trip: fetch all projects (derive counts + recent from
+  // it), the client count, and the freelancer name together instead of six
+  // separate queries that each pay Supabase round-trip latency.
+  const [projectsResult, clientsResult, freelancerResult] = await Promise.all([
+    supabase
+      .from("projects")
+      .select("id, title, created_at, payment_status, project_status, clients(client_name)")
+      .eq("freelancer_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("clients")
+      .select("id", { count: "exact", head: true })
+      .eq("freelancer_id", user.id),
+    supabase.from("freelancers").select("full_name").eq("id", user.id).single(),
   ]);
 
-  const { data: recentProjects } = await supabase
-    .from("projects")
-    .select("*, clients(client_name)")
-    .eq("freelancer_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(5);
+  const freelancer = freelancerResult.data;
+  const projects = projectsResult.data ?? [];
+  const clientsCount = clientsResult.count ?? 0;
+
+  const projectsCount = projects.length;
+  const pendingReviewsCount = projects.filter((p) => p.project_status === "in_review").length;
+  const paidProjectsCount = projects.filter((p) => p.payment_status === "paid").length;
+  const recentProjects = projects.slice(0, 5);
 
   const stats = [
-    { label: "Total projects", value: projectsCount ?? 0 },
-    { label: "Active clients", value: clientsCount ?? 0 },
-    { label: "Pending review", value: pendingReviewsCount ?? 0 },
-    { label: "Paid projects", value: paidProjectsCount ?? 0 },
+    { label: "Total projects", value: projectsCount },
+    { label: "Active clients", value: clientsCount },
+    { label: "Pending review", value: pendingReviewsCount },
+    { label: "Paid projects", value: paidProjectsCount },
   ];
 
   return (
@@ -117,7 +118,7 @@ export default async function DashboardPage() {
                     {p.title}
                   </p>
                   <p className="truncate font-mono text-[11px] text-zinc-400">
-                    {p.clients?.client_name || "No client"}
+                    {asSingle(p.clients)?.client_name || "No client"}
                   </p>
                 </div>
                 <span
