@@ -61,8 +61,21 @@ export async function togglePaymentStatus(formData: FormData): Promise<void> {
   if (!user) throw new Error("Not authenticated");
 
   const id = formData.get("id") as string;
-  const currentStatus = formData.get("current_status") as string;
-  const newStatus = currentStatus === "paid" ? "unpaid" : "paid";
+
+  // Read the authoritative current status from the DB instead of trusting the
+  // client-provided `current_status` (which can be stale after another update
+  // re-renders the page). This keeps payment status stable — it only flips on
+  // this explicit action, never because of a stale hidden input.
+  const { data: project } = await supabase
+    .from("projects")
+    .select("payment_status")
+    .eq("id", id)
+    .eq("freelancer_id", user.id)
+    .single();
+
+  if (!project) throw new Error("Project not found");
+
+  const newStatus = project.payment_status === "paid" ? "unpaid" : "paid";
 
   const { error } = await supabase
     .from("projects")
@@ -82,8 +95,19 @@ export async function toggleWatermarkAction(formData: FormData): Promise<void> {
   if (!user) throw new Error("Not authenticated");
 
   const id = formData.get("id") as string;
-  const current = formData.get("current") === "true";
-  const next = !current;
+
+  // Same as payment status: read the current value from the DB so the toggle is
+  // authoritative and can't flip the wrong way from a stale form value.
+  const { data: project } = await supabase
+    .from("projects")
+    .select("watermark_enabled")
+    .eq("id", id)
+    .eq("freelancer_id", user.id)
+    .single();
+
+  if (!project) throw new Error("Project not found");
+
+  const next = !project.watermark_enabled;
 
   const { error } = await supabase
     .from("projects")
