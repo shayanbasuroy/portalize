@@ -44,10 +44,25 @@ export async function updateProfileAction(
 
   const { full_name, business_name, brand_color } = validated.data;
 
-  // Optional new logo upload (public brand-assets bucket).
+  // Check subscription tier for Pro branding features
+  const { data: currentFreelancer } = await supabase
+    .from("freelancers")
+    .select("subscription_tier")
+    .eq("id", user.id)
+    .single();
+
+  const isPro = currentFreelancer?.subscription_tier === "pro";
+
+  // Optional new logo upload (public brand-assets bucket - Pro only).
   let logo_url: string | null = null;
   const file = formData.get("logo") as File | null;
   if (file && file.size > 0) {
+    if (!isPro) {
+      return {
+        error: "Custom logo upload is a Pro feature. Upgrade to Pro to customize branding.",
+      };
+    }
+
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     const path = `${user.id}/${Date.now()}_${safeName}`;
 

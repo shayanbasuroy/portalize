@@ -1,7 +1,8 @@
 import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { asSingle } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, FolderKanban, Plus } from "lucide-react";
+import { UpgradeButton } from "@/components/admin/UpgradeButton";
+import { ArrowRight, FolderKanban, Plus, Sparkles, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 const borders = [
@@ -18,8 +19,7 @@ export default async function DashboardPage() {
   if (!user) return null;
 
   // Single parallel round-trip: fetch all projects (derive counts + recent from
-  // it), the client count, and the freelancer name together instead of six
-  // separate queries that each pay Supabase round-trip latency.
+  // it), the client count, and the freelancer profile together.
   const [projectsResult, clientsResult, freelancerResult] = await Promise.all([
     supabase
       .from("projects")
@@ -30,10 +30,15 @@ export default async function DashboardPage() {
       .from("clients")
       .select("id", { count: "exact", head: true })
       .eq("freelancer_id", user.id),
-    supabase.from("freelancers").select("full_name").eq("id", user.id).single(),
+    supabase
+      .from("freelancers")
+      .select("full_name, subscription_tier, subscription_status")
+      .eq("id", user.id)
+      .single(),
   ]);
 
   const freelancer = freelancerResult.data;
+  const isPro = freelancer?.subscription_tier === "pro";
   const projects = projectsResult.data ?? [];
   const clientsCount = clientsResult.count ?? 0;
 
@@ -51,12 +56,44 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-10">
+      {/* Upgrade Banner for Free Users */}
+      {!isPro && (
+        <div className="flex flex-col gap-4 border border-[#6C3FE8]/30 bg-[#6C3FE8]/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="flex size-5 items-center justify-center rounded-full bg-[#6C3FE8] text-white">
+                <Sparkles className="size-3" />
+              </span>
+              <p className="text-sm font-medium text-[#151B45]">
+                Free Plan ({projectsCount}/1 client portal used)
+              </p>
+            </div>
+            <p className="text-xs text-zinc-600">
+              Upgrade to Pro ($19/mo) to create unlimited client portals, customize your logo & brand color, and get priority support.
+            </p>
+          </div>
+          <UpgradeButton size="sm" className="shrink-0 bg-[#6C3FE8] text-white hover:bg-[#582ed1]" />
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
-            Dashboard
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+              Dashboard
+            </p>
+            <span
+              className={`inline-flex items-center gap-1 border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
+                isPro
+                  ? "border-[#6C3FE8]/40 bg-[#6C3FE8]/10 text-[#6C3FE8]"
+                  : "border-zinc-300 bg-zinc-100 text-zinc-600"
+              }`}
+            >
+              {isPro && <ShieldCheck className="size-3" />}
+              {isPro ? "Pro Plan" : "Free Plan"}
+            </span>
+          </div>
           <h1 className="mt-2 text-2xl font-medium tracking-tight text-[#151B45] sm:text-3xl">
             Welcome back, {freelancer?.full_name || "Freelancer"}
           </h1>

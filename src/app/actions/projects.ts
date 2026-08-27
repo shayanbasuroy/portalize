@@ -27,6 +27,30 @@ export async function createProjectAction(prevState: any, formData: FormData) {
   }
 
   const { title, client_id } = validatedFields.data;
+
+  // Hard server-side tier enforcement: Free tier is limited to 1 active project
+  const [{ data: freelancer }, { count: projectCount }] = await Promise.all([
+    supabase
+      .from("freelancers")
+      .select("subscription_tier")
+      .eq("id", user.id)
+      .single(),
+    supabase
+      .from("projects")
+      .select("id", { count: "exact", head: true })
+      .eq("freelancer_id", user.id),
+  ]);
+
+  const isPro = freelancer?.subscription_tier === "pro";
+  const currentCount = projectCount ?? 0;
+
+  if (!isPro && currentCount >= 1) {
+    return {
+      error:
+        "Free tier is limited to 1 client portal. Upgrade to Pro for unlimited client portals.",
+    };
+  }
+
   const slug = generateSlug(title);
   const pin = generatePin();
   const hashedPin = await hashPin(pin);

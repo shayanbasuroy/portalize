@@ -152,4 +152,28 @@ Replaced the 3 text rows with flat cells, each carrying a mini mockup:
 ### Favicon & Branding
 - **Custom Portalize Favicon** — replaced the default Vercel/Next.js favicon with the official Portalize icon (`icon.png`), updating `/public/favicon.ico`, `/src/app/favicon.ico`, and `/src/app/icon.png` along with full `metadata.icons` definitions in `src/app/layout.tsx`.
 
+## 2026-08-27 (Session 3) — Dodo Payments SaaS Subscriptions & Hard Tier Enforcement
+
+### Dodo Payments Integration
+- **SDK & Client Setup** — installed `dodopayments` SDK and configured `src/lib/dodo.ts` with test mode environment and product ID mapping.
+- **Portalize Pro Product Created** — created the official "Portalize Pro" ($19/mo recurring SaaS subscription) in Dodo Payments test mode (`pdt_0NmHjRgnGankECp1XlRFW`).
+- **Server Actions (`src/app/actions/billing.ts`)**:
+  - `createUpgradeCheckoutAction`: creates a Dodo hosted checkout session with metadata and customer info.
+  - `createCustomerPortalAction`: creates a Dodo Customer Portal session for subscribers to manage payment methods and cancellation.
+- **Webhook Handler (`src/app/api/webhooks/dodo/route.ts`)**:
+  - Validates Dodo webhook signatures with `dodo.webhooks.unwrap()`.
+  - Handles `subscription.active`, `subscription.renewed`, `subscription.plan_changed` (grants Pro).
+  - Handles `subscription.cancelled`, `subscription.expired`, `subscription.failed`, `subscription.on_hold` (reverts to Free).
+
+### Hard Server-Side Tier Enforcement
+- **Database Schema (`008_subscriptions.sql`)** — added `subscription_tier`, `subscription_id`, `customer_id`, and `subscription_status` columns to `public.freelancers` with index.
+- **Project Limit Enforcement (`src/app/actions/projects.ts`)** — Free tier is strictly limited to 1 active project on the database level. Any server action call to create a 2nd project returns `{ error: "Free tier is limited to 1 client portal. Upgrade to Pro for unlimited client portals." }`.
+- **Branding Enforcement (`src/app/actions/profile.ts`)** — custom logo uploads are strictly rejected on the server if the user is on the Free tier.
+
+### UI & Paywall Gating
+- **Dashboard (`/dashboard`)** — displays dynamic `Free Plan` vs `Pro Plan` badge in the header, plus an upgrade banner for free users.
+- **New Project Paywall (`/dashboard/projects/new`)** — when a free user reaches the 1-portal limit, the creation form is replaced with a clear, high-conversion Upgrade to Pro card.
+- **Settings & Billing (`/dashboard/settings`)** — added Subscription Plan card with dynamic Upgrade CTA / Manage Billing buttons, plus Pro feature badges on custom logo & brand color pickers.
+
+
 
