@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useInView } from "motion/react";
 import {
   Check,
   Code2,
@@ -17,12 +17,6 @@ import {
 } from "lucide-react";
 import { EASE, Heading, PulseDot, Reveal } from "@/components/landing/reveal";
 
-/**
- * The capability grid, drawn as an asymmetric bento of micro-UI mockups. Four
- * flat cells on a 3-column grid (2 · 1 / 1 · 2), ruled by 1px hairlines the
- * way the rest of the page is — no shadows, no gradients, sharp corners. Each
- * cell shows the feature working, and each mockup animates as it enters.
- */
 export function Features() {
   return (
     <section id="features" className="scroll-mt-16 border-t border-zinc-200">
@@ -45,7 +39,7 @@ export function Features() {
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-px border border-zinc-200 bg-zinc-200 lg:grid-cols-3">
-          <Bento n="01" tag="in-browser" title="Every file previews in-browser" className="lg:col-span-2" delay={0}>
+          <Bento n="01" tag="in-browser" title="Every file previews in-browser" className="lg:col-span-2">
             <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">
               Images, PDFs, Figma boards, video, and code — any deliverable
               renders right in the browser, so clients preview without
@@ -54,7 +48,7 @@ export function Features() {
             <PreviewEngine />
           </Bento>
 
-          <Bento n="02" tag="automatic" title="Payment lock protection" delay={0.06}>
+          <Bento n="02" tag="automatic" title="Payment lock protection">
             <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">
               Previews stay watermarked and downloads stay sealed until you mark
               the invoice paid.
@@ -62,14 +56,14 @@ export function Features() {
             <WatermarkPreview />
           </Bento>
 
-          <Bento n="03" tag="realtime" title="Read receipts" delay={0.12}>
+          <Bento n="03" tag="realtime" title="Read receipts">
             <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">
               Know the moment a client opens the portal and what they linger on.
             </p>
             <ReadReceiptToast />
           </Bento>
 
-          <Bento n="04" tag="zero-login" title="Zero client logins" className="lg:col-span-2" delay={0.18}>
+          <Bento n="04" tag="zero-login" title="Zero client logins" className="lg:col-span-2">
             <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">
               Your client opens one link and types a 4-digit PIN. No accounts to
               create, no passwords to reset, nothing to install.
@@ -83,9 +77,8 @@ export function Features() {
 }
 
 /**
- * A single bento cell: mono index and tag on the top hairline, a title, then
- * the mockup. `className` carries the grid span; the parent's `gap-px` grid
- * draws the shared hairlines.
+ * Bento cell — uses a single shared `inView` ref so all child animations
+ * fire immediately when the cell enters the viewport, not each independently.
  */
 function Bento({
   n,
@@ -93,17 +86,25 @@ function Bento({
   title,
   children,
   className = "",
-  delay = 0,
 }: {
   n: string;
   tag: string;
   title: string;
   children: ReactNode;
   className?: string;
-  delay?: number;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // Fire as soon as the top edge of the cell is 50px into the viewport
+  const inView = useInView(ref, { once: true, margin: "0px 0px -50px 0px" });
+
   return (
-    <Reveal className={`flex flex-col bg-white p-7 sm:p-8 ${className}`} delay={delay}>
+    <motion.div
+      ref={ref}
+      className={`flex flex-col bg-white p-7 sm:p-8 ${className}`}
+      initial={{ opacity: 0, y: 12 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.35, ease: EASE }}
+    >
       <div className="flex items-baseline justify-between gap-4">
         <span className="font-mono text-sm text-zinc-400">{n}</span>
         <span className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-400">
@@ -114,13 +115,19 @@ function Bento({
       <h3 className="mt-4 text-lg font-medium tracking-tight text-[#151B45]">
         {title}
       </h3>
-      {children}
-    </Reveal>
+      {/* Pass inView down via context-like pattern using a wrapper */}
+      <BentoInViewContext.Provider value={inView}>
+        {children}
+      </BentoInViewContext.Provider>
+    </motion.div>
   );
 }
 
+import { createContext, useContext } from "react";
+const BentoInViewContext = createContext(false);
+
 /* ------------------------------------------------------------------ */
-/* Mockups                                                            */
+/* Mockups                                                              */
 /* ------------------------------------------------------------------ */
 
 const previewTabs = [
@@ -131,7 +138,6 @@ const previewTabs = [
   { label: "Code", icon: Code2 },
 ];
 
-/** A tabbed previewer whose active tab auto-cycles with a sliding underline. */
 function PreviewEngine() {
   const [active, setActive] = useState(0);
 
@@ -175,10 +181,10 @@ function PreviewEngine() {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={active}
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.28, ease: EASE }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: EASE }}
           >
             <TabContent label={previewTabs[active].label} />
           </motion.div>
@@ -256,8 +262,9 @@ function TabContent({ label }: { label: string }) {
   }
 }
 
-/** A watermarked photo preview with a locked file row underneath. */
+/** Watermark preview — fires from parent Bento's inView, no secondary trigger. */
 function WatermarkPreview() {
+  const inView = useContext(BentoInViewContext);
   return (
     <div className="mt-6">
       <div className="relative aspect-[4/3] overflow-hidden border border-zinc-200 bg-zinc-50">
@@ -268,15 +275,13 @@ function WatermarkPreview() {
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.4, ease: EASE, delay: 0.25 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.3, ease: EASE, delay: 0.15 }}
         >
           <motion.span
-            initial={{ scale: 1.5, rotate: -26, opacity: 0 }}
-            whileInView={{ scale: 1, rotate: -14, opacity: 1 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ type: "spring", stiffness: 220, damping: 16, delay: 0.25 }}
+            initial={{ scale: 1.4, rotate: -26, opacity: 0 }}
+            animate={inView ? { scale: 1, rotate: -14, opacity: 1 } : {}}
+            transition={{ type: "spring", stiffness: 280, damping: 18, delay: 0.2 }}
             className="-rotate-[14deg] border border-amber-300 bg-amber-50/80 px-3 py-1 font-mono text-[11px] tracking-[0.16em] text-amber-700"
           >
             PREVIEW ONLY — UNPAID
@@ -285,9 +290,8 @@ function WatermarkPreview() {
 
         <motion.span
           initial={{ scale: 0, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.45 }}
+          animate={inView ? { scale: 1, opacity: 1 } : {}}
+          transition={{ type: "spring", stiffness: 320, damping: 20, delay: 0.32 }}
           className="absolute right-2.5 top-2.5 flex size-6 items-center justify-center border border-zinc-200 bg-white/80 text-amber-600"
         >
           <Lock className="size-3" strokeWidth={2} />
@@ -295,10 +299,9 @@ function WatermarkPreview() {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.4, ease: EASE, delay: 0.55 }}
+        initial={{ opacity: 0, y: 6 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.3, ease: EASE, delay: 0.38 }}
         className="mt-3 flex items-center justify-between border border-zinc-200 px-3 py-2.5"
       >
         <span className="flex items-center gap-2 font-mono text-[11px] text-zinc-500">
@@ -314,15 +317,15 @@ function WatermarkPreview() {
   );
 }
 
-/** A dark read-receipt toast, set in Portal Navy (not pitch black). */
+/** Read-receipt toast — fires from parent Bento's inView. */
 function ReadReceiptToast() {
+  const inView = useContext(BentoInViewContext);
   return (
     <div className="mt-6">
       <motion.div
-        initial={{ opacity: 0, y: 16, scale: 0.97 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ type: "spring", stiffness: 260, damping: 22, delay: 0.2 }}
+        initial={{ opacity: 0, y: 12, scale: 0.97 }}
+        animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
+        transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.1 }}
         className="relative border border-[#151B45] bg-[#151B45] p-4"
       >
         <span className="absolute right-3 top-3 flex items-center gap-1.5 font-mono text-[10px] text-white/45">
@@ -352,10 +355,9 @@ function ReadReceiptToast() {
         ].map((line, i) => (
           <motion.li
             key={line}
-            initial={{ opacity: 0, x: -10 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.4, ease: EASE, delay: 0.4 + i * 0.12 }}
+            initial={{ opacity: 0, x: -8 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.28, ease: EASE, delay: 0.18 + i * 0.08 }}
             className={i === 2 ? "flex items-center gap-1.5 text-emerald-600" : ""}
           >
             {i === 2 && <Check className="size-3" strokeWidth={2.5} />}
@@ -367,8 +369,9 @@ function ReadReceiptToast() {
   );
 }
 
-/** Old way vs our way: six logins against one link and a 4-digit PIN. */
+/** Login comparison — fires from parent Bento's inView. */
 function LoginComparison() {
+  const inView = useContext(BentoInViewContext);
   const accounts = [
     "drive@client.com",
     "figma@client.com",
@@ -388,19 +391,17 @@ function LoginComparison() {
           {accounts.map((a, i) => (
             <motion.li
               key={a}
-              initial={{ opacity: 0, x: -8 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.35, ease: EASE, delay: 0.2 + i * 0.08 }}
+              initial={{ opacity: 0, x: -6 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.25, ease: EASE, delay: 0.08 + i * 0.05 }}
               className="relative truncate border border-zinc-200 px-2.5 py-1.5 font-mono text-[11px] text-zinc-400"
             >
               {a}
               <motion.span
                 aria-hidden
                 initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.45, ease: EASE, delay: 0.34 + i * 0.08 }}
+                animate={inView ? { scaleX: 1 } : {}}
+                transition={{ duration: 0.3, ease: EASE, delay: 0.18 + i * 0.05 }}
                 className="absolute inset-x-0 top-1/2 h-px origin-left bg-zinc-300"
               />
             </motion.li>
@@ -419,10 +420,9 @@ function LoginComparison() {
           {[8, 4, 9, 2].map((d, i) => (
             <motion.span
               key={i}
-              initial={{ opacity: 0, y: 8, scale: 0.6 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.35, ease: EASE, delay: 0.5 + i * 0.12 }}
+              initial={{ opacity: 0, y: 6, scale: 0.7 }}
+              animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ duration: 0.28, ease: EASE, delay: 0.12 + i * 0.07 }}
               className={`flex size-9 items-center justify-center border font-mono text-sm text-[#151B45] ${
                 i === 3 ? "border-[#6C3FE8]" : "border-zinc-300"
               }`}
