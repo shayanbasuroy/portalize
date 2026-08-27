@@ -60,7 +60,8 @@ export function ClientActions({ client }: { client: Client }) {
 
   useEffect(() => {
     if (state?.success) {
-      setEditOpen(false);
+      const timer = setTimeout(() => setEditOpen(false), 0);
+      return () => clearTimeout(timer);
     }
   }, [state]);
 

@@ -59,7 +59,7 @@ export function PortalView({ initialProject, initialDeliverables }: PortalViewPr
           <span className="size-2.5 bg-zinc-300" />
         </span>
         <span className="ml-3 truncate font-mono text-[11px] text-zinc-400">
-          portalize.app/p/{project.slug}
+          portalize.site/p/{project.slug}
         </span>
         <span className="ml-auto hidden items-center gap-1.5 font-mono text-[11px] text-zinc-400 sm:flex">
           <Lock className="size-3" strokeWidth={2} />

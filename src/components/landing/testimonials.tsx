@@ -1,3 +1,8 @@
+"use client";
+
+import { motion } from "motion/react";
+import { EASE, Heading, Reveal } from "@/components/landing/reveal";
+
 const quotes = [
   {
     text: "I stopped chasing invoices. My clients can't download the files until they pay — so they pay.",
@@ -24,34 +29,51 @@ const cells = [
 
 /**
  * Three pull-quotes set as a rule-divided row. A hanging quote mark and a
- * mono attribution — a spread of voices, not a carousel of cards.
+ * mono attribution — a spread of voices, not a carousel of cards. Each quote
+ * settles in on its own beat.
  */
 export function Testimonials() {
   return (
     <section className="border-t border-zinc-200">
       <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
         <div className="max-w-2xl">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
-            From freelancers
-          </p>
-          <h2 className="mt-6 text-3xl font-medium leading-[1.05] tracking-[-0.02em] text-[#151B45] sm:text-4xl lg:text-5xl">
+          <Reveal>
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+              From freelancers
+            </p>
+          </Reveal>
+          <Heading className="mt-6 text-3xl font-medium leading-[1.05] tracking-[-0.02em] text-[#151B45] sm:text-4xl lg:text-5xl">
             The handoff, handled.
-          </h2>
+          </Heading>
         </div>
 
         <div className="mt-14 grid lg:grid-cols-3">
           {quotes.map((q, i) => (
-            <figure key={q.name} className={cells[i]}>
+            <motion.figure
+              key={q.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.6, ease: EASE, delay: i * 0.12 }}
+              className={cells[i]}
+            >
               <blockquote className="text-[17px] leading-relaxed text-[#151B45]">
-                <span aria-hidden className="mr-0.5 font-mono text-zinc-300">
+                <motion.span
+                  aria-hidden
+                  initial={{ opacity: 0, y: 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, ease: EASE, delay: 0.15 + i * 0.12 }}
+                  className="mr-0.5 inline-block font-mono text-zinc-300"
+                >
                   “
-                </span>
+                </motion.span>
                 {q.text}
               </blockquote>
               <figcaption className="mt-6 font-mono text-xs text-zinc-400">
                 — {q.name}, {q.role}
               </figcaption>
-            </figure>
+            </motion.figure>
           ))}
         </div>
       </div>

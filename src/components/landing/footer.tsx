@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "motion/react";
 import { LogoLink } from "@/components/landing/logo";
+import { EASE } from "@/components/landing/reveal";
 
 const columns = [
   {
@@ -26,16 +30,27 @@ export function Footer() {
     <footer className="border-t border-zinc-200">
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.55, ease: EASE }}
+          >
             <LogoLink />
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-zinc-500">
               Zero-login client portals for freelancers. Share work, collect
               feedback, and get paid before downloads unlock.
             </p>
-          </div>
+          </motion.div>
 
-          {columns.map((col) => (
-            <div key={col.title}>
+          {columns.map((col, i) => (
+            <motion.div
+              key={col.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.55, ease: EASE, delay: 0.08 + i * 0.08 }}
+            >
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-400">
                 {col.title}
               </p>
@@ -51,14 +66,20 @@ export function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-zinc-200 pt-6 text-sm text-zinc-400 sm:flex-row sm:items-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.55, ease: EASE, delay: 0.15 }}
+          className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-zinc-200 pt-6 text-sm text-zinc-400 sm:flex-row sm:items-center"
+        >
           <p>© {new Date().getFullYear()} Portalize</p>
           <p className="font-mono text-xs">Deliver work · Get paid first</p>
-        </div>
+        </motion.div>
       </div>
     </footer>
   );

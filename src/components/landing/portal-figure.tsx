@@ -51,7 +51,7 @@ export function PortalFigure() {
               <span className="size-2.5 bg-zinc-300" />
             </span>
             <span className="ml-3 truncate font-mono text-[11px] text-zinc-400">
-              portalize.app/p/acme-brand-2026
+              portalize.site/p/acme-brand-2026
             </span>
             <span className="ml-auto hidden items-center gap-1.5 font-mono text-[11px] text-zinc-400 sm:flex">
               <Lock className="size-3" strokeWidth={2} />

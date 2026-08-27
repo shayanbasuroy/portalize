@@ -25,7 +25,8 @@ export function AddClientDialog() {
 
   useEffect(() => {
     if (state?.success) {
-      setOpen(false);
+      const timer = setTimeout(() => setOpen(false), 0);
+      return () => clearTimeout(timer);
     }
   }, [state]);
 

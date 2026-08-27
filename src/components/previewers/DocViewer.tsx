@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
-import 'react-pdf/dist/Page/AnnotationLayer.css'
-import 'react-pdf/dist/Page/TextLayer.css'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react'
 
-// Set worker from CDN
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+// Set worker from CDN safely in browser
+if (typeof window !== 'undefined') {
+  pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`
+}
 
 interface DocViewerProps {
   url: string
@@ -78,15 +78,15 @@ export function DocViewer({ url }: DocViewerProps) {
         <Document
           file={url}
           onLoadSuccess={onDocumentLoadSuccess}
-          loading={<div className="flex h-full items-center justify-center p-12">Loading PDF...</div>}
-          error={<div className="p-12 text-destructive">Failed to load PDF. Please try again.</div>}
+          loading={<div className="flex h-full items-center justify-center p-12 text-sm text-zinc-500">Loading PDF...</div>}
+          error={<div className="p-12 text-sm text-destructive">Failed to load PDF preview.</div>}
         >
           <Page 
             pageNumber={pageNumber} 
             scale={scale} 
-            renderTextLayer={true}
-            renderAnnotationLayer={true}
-            className="bg-white"
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
+            className="bg-white shadow-sm"
           />
         </Document>
       </div>

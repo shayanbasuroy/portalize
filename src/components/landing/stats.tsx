@@ -1,8 +1,13 @@
+"use client";
+
+import { motion } from "motion/react";
+import { CountUp, EASE } from "@/components/landing/reveal";
+
 const stats = [
-  { value: "1", label: "link for the whole delivery" },
-  { value: "0", label: "client accounts to create" },
-  { value: "4-digit", label: "PIN instead of passwords" },
-  { value: "100%", label: "of downloads gated until paid" },
+  { value: 1, suffix: "", label: "link for the whole delivery" },
+  { value: 0, suffix: "", label: "client accounts to create" },
+  { value: null, text: "4-digit", label: "PIN instead of passwords" },
+  { value: 100, suffix: "%", label: "of downloads gated until paid" },
 ];
 
 // Hairlines per cell. Mobile is a 2-column grid (top+left rules), desktop is
@@ -16,7 +21,8 @@ const borders = [
 
 /**
  * A thin "spec index" strip. Four facts as a rule-divided row — mono values
- * over small labels. Ink and hairlines, no stat cards.
+ * over small labels. The numerals count up as the strip enters; the whole row
+ * staggers in left to right. Ink and hairlines, no stat cards.
  */
 export function Stats() {
   return (
@@ -24,17 +30,28 @@ export function Stats() {
       <div className="mx-auto max-w-6xl px-6">
         <dl className="grid grid-cols-2 lg:grid-cols-4">
           {stats.map((s, i) => (
-            <div
+            <motion.div
               key={s.label}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.55, ease: EASE, delay: i * 0.08 }}
               className={`flex flex-col gap-1.5 px-6 py-9 lg:px-8 ${borders[i]}`}
             >
               <dt className="order-2 font-mono text-[11px] leading-snug text-zinc-500">
                 {s.label}
               </dt>
               <dd className="order-1 text-3xl font-medium tracking-tight text-[#151B45]">
-                {s.value}
+                {s.value !== null ? (
+                  <>
+                    <CountUp to={s.value} duration={1.2} delay={i * 0.08} />
+                    {s.suffix}
+                  </>
+                ) : (
+                  s.text
+                )}
               </dd>
-            </div>
+            </motion.div>
           ))}
         </dl>
       </div>
