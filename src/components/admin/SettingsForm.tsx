@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { updateProfileAction } from "@/app/actions/profile";
 import { UpgradeButton, ManageBillingButton } from "@/components/admin/UpgradeButton";
-import { ShieldCheck, Sparkles, Lock, Check } from "lucide-react";
+import { Lock } from "lucide-react";
 import { toast } from "sonner";
 
 interface FreelancerProfile {
@@ -43,67 +43,55 @@ export function SettingsForm({ profile }: { profile: FreelancerProfile }) {
 
   return (
     <div className="space-y-8">
-      {/* Subscription & Plan Card */}
+      {/* Subscription & Plan */}
       <div className="border border-zinc-200 bg-white">
-        <div className="p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-medium tracking-tight text-[#151B45]">
-                  Subscription Plan
-                </h2>
-                <span
-                  className={`inline-flex items-center gap-1 border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
-                    isPro
-                      ? "border-[#6C3FE8]/40 bg-[#6C3FE8]/10 text-[#6C3FE8]"
-                      : "border-zinc-300 bg-zinc-100 text-zinc-600"
-                  }`}
-                >
-                  {isPro && <ShieldCheck className="size-3" />}
-                  {isPro ? "Pro Plan — $19/mo" : "Free Plan"}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-zinc-500">
-                {isPro
-                  ? "You have full unlimited access to all client portals, custom branding, and read receipts."
-                  : "You are on the Free tier (1 active client portal, standard branding)."}
-              </p>
-            </div>
-
-            <div className="shrink-0">
-              {isPro ? (
-                <ManageBillingButton />
-              ) : (
-                <UpgradeButton size="sm" />
-              )}
-            </div>
+        <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400">
+              Subscription
+            </p>
+            <h2 className="mt-0.5 text-base font-medium tracking-tight text-[#151B45]">
+              {isPro ? "Pro Plan — $19 / month" : "Free Plan"}
+            </h2>
           </div>
+          <span className="font-mono text-[11px] text-zinc-400">
+            [{isPro ? "Active" : "Free"}]
+          </span>
+        </div>
+
+        <div className="p-6">
+          <p className="text-sm text-zinc-600">
+            {isPro
+              ? "You have full unlimited access to all client portals, custom branding, and realtime read receipts."
+              : "You are on the Free tier — 1 active client portal, standard branding only."}
+          </p>
 
           {!isPro && (
-            <div className="mt-4 border-t border-zinc-100 pt-4">
-              <p className="text-xs font-medium text-zinc-700">Pro unlocks:</p>
-              <div className="mt-2 grid grid-cols-1 gap-2 text-xs text-zinc-600 sm:grid-cols-2">
-                <span className="flex items-center gap-1.5">
-                  <Check className="size-3.5 text-emerald-600 shrink-0" />
-                  Unlimited client portals
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Check className="size-3.5 text-emerald-600 shrink-0" />
-                  Custom logo & brand accent colors
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Check className="size-3.5 text-emerald-600 shrink-0" />
-                  Realtime read receipts & activity
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Check className="size-3.5 text-emerald-600 shrink-0" />
-                  Priority support
-                </span>
-              </div>
-            </div>
+            <ul className="mt-4 space-y-2 text-sm text-zinc-600">
+              {[
+                "Unlimited client portals",
+                "Custom logo & brand accent colors",
+                "Realtime read receipts & activity trail",
+                "Priority support",
+              ].map((feature) => (
+                <li key={feature} className="flex items-start gap-3">
+                  <span aria-hidden className="mt-[7px] h-px w-3 shrink-0 bg-zinc-300" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
           )}
+
+          <div className="mt-6 pt-6 border-t border-zinc-100">
+            {isPro ? (
+              <ManageBillingButton />
+            ) : (
+              <UpgradeButton size="sm" text="Upgrade to Pro — $19/mo" />
+            )}
+          </div>
         </div>
       </div>
+
 
       <form action={formAction} className="space-y-6">
         <div className="border border-zinc-200 bg-white">

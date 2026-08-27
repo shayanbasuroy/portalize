@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { createUpgradeCheckoutAction, createCustomerPortalAction } from "@/app/actions/billing";
-import { Loader2, Sparkles, CreditCard } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
 interface UpgradeButtonProps {
@@ -15,7 +15,7 @@ interface UpgradeButtonProps {
 
 export function UpgradeButton({
   variant = "default",
-  className = "bg-[#6C3FE8] text-white hover:bg-[#582ed1]",
+  className = "bg-[#151B45] text-[#F8F7FC] hover:bg-zinc-800",
   size = "default",
   text = "Upgrade to Pro — $19/mo",
 }: UpgradeButtonProps) {
@@ -50,13 +50,13 @@ export function UpgradeButton({
     >
       {loading ? (
         <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
           Preparing checkout...
         </>
       ) : (
         <>
-          <Sparkles className="mr-2 h-4 w-4" />
-          {text}
+          <span>{text}</span>
+          <ArrowRight className="ml-2 size-3.5" strokeWidth={2} />
         </>
       )}
     </Button>
@@ -91,17 +91,17 @@ export function ManageBillingButton({ className = "" }: { className?: string }) 
       size="sm"
       onClick={handleManage}
       disabled={loading}
-      className={className}
+      className={`border-zinc-200 text-[#151B45] hover:bg-zinc-100 ${className}`}
     >
       {loading ? (
         <>
           <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
-          Opening billing...
+          Opening...
         </>
       ) : (
         <>
-          <CreditCard className="mr-2 h-3.5 w-3.5" />
-          Manage Billing
+          <span>Manage subscription</span>
+          <ArrowRight className="ml-1.5 size-3" />
         </>
       )}
     </Button>

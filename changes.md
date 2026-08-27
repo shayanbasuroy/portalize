@@ -175,5 +175,33 @@ Replaced the 3 text rows with flat cells, each carrying a mini mockup:
 - **New Project Paywall (`/dashboard/projects/new`)** — when a free user reaches the 1-portal limit, the creation form is replaced with a clear, high-conversion Upgrade to Pro card.
 - **Settings & Billing (`/dashboard/settings`)** — added Subscription Plan card with dynamic Upgrade CTA / Manage Billing buttons, plus Pro feature badges on custom logo & brand color pickers.
 
+## 2026-08-27 (Session 4) — Subscription UI: Minimalist Editorial Redesign
 
+Completely removed generic AI-slop styling (purple `#6C3FE8` backgrounds, `Sparkles` icons, bubbly `rounded-xl` cards) from all four subscription/upgrade UI surfaces. Every surface now strictly adheres to the Portalize Minimalist Editorial design system.
+
+### `src/components/admin/UpgradeButton.tsx`
+- Removed `Sparkles` icon; replaced with clean `ArrowRight` on all CTA buttons.
+- `UpgradeButton`: Portal Navy `bg-[#151B45] text-[#F8F7FC] hover:bg-zinc-800`, accepts a `text` prop for copy variation.
+- `ManageBillingButton`: clean `border-zinc-200 text-[#151B45] hover:bg-zinc-100` outline button.
+- Both buttons display loading state with spinner and descriptive copy.
+
+### `src/app/(admin)/dashboard/page.tsx`
+- **Plan banner**: replaced purple glowing box with a clean `border border-zinc-200 bg-white p-5` strip.
+- Uses monospace spec label `PLAN INDEX · FREE TIER` and bracket notation `[1/1 portal created]`.
+- **Header badge**: replaced purple `ShieldCheck` badge with a minimal monospace `[Free]` / `[Pro]` text indicator.
+- Removed unused `Sparkles` and `ShieldCheck` imports.
+
+### `src/app/(admin)/dashboard/projects/new/page.tsx`
+- **Paywall card**: replaced purple-bordered card with `border border-zinc-200 bg-white p-8`.
+- Header uses monospace `Plan Index · Limit Reached` spec label and `[1/1 used]` bracket counter.
+- Feature list uses hairline `h-px w-3 bg-zinc-300` dashes instead of green `Check` icons.
+- Actions row: two-column layout with Navy `UpgradeButton` and ghost `View existing projects` link.
+- Removed unused `Sparkles`, `ArrowLeft`, `Check` imports.
+
+### `src/components/admin/SettingsForm.tsx`
+- **Subscription card**: replaced purple badge and check-grid with a bordered card matching Profile/Branding section structure.
+- `SUBSCRIPTION` monospace label in the header; `[Active]` / `[Free]` bracket state.
+- Feature list uses hairline dashes rendered from a map (DRY, consistent with new project paywall).
+- Upgrade / Manage Billing buttons placed at the bottom of the card body above a `border-t border-zinc-100` divider.
+- Removed unused `ShieldCheck`, `Sparkles`, `Check` imports.
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { NewProjectForm } from "./NewProjectForm";
 import { UpgradeButton } from "@/components/admin/UpgradeButton";
-import { Sparkles, ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default async function NewProjectPage() {
@@ -46,49 +46,48 @@ export default async function NewProjectPage() {
       </div>
 
       {isLimitReached ? (
-        <div className="border border-[#6C3FE8]/40 bg-white p-8 shadow-xs">
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-[#6C3FE8] text-white">
-              <Sparkles className="size-5" />
-            </span>
+        <div className="border border-zinc-200 bg-white p-8">
+          <div className="flex items-center justify-between border-b border-zinc-200 pb-5">
             <div>
-              <h2 className="text-lg font-medium text-[#151B45]">
-                Portal limit reached on Free plan
-              </h2>
-              <p className="text-xs text-zinc-500">
-                You have reached the 1-portal limit on the Free tier.
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400">
+                Plan Index · Limit Reached
               </p>
+              <h2 className="mt-2 text-xl font-medium tracking-tight text-[#151B45]">
+                Free tier is limited to 1 client portal
+              </h2>
             </div>
+            <span className="font-mono text-xs text-zinc-400">[1/1 used]</span>
           </div>
 
-          <div className="my-6 space-y-3 border-y border-zinc-200 py-6">
-            <p className="text-sm font-medium text-[#151B45]">Upgrade to Pro ($19/mo) and get:</p>
-            <ul className="space-y-2 text-sm text-zinc-600">
-              <li className="flex items-center gap-2">
-                <Check className="size-4 text-emerald-600" />
-                <strong>Unlimited client portals</strong> for all your active client work
+          <div className="py-6">
+            <p className="text-sm text-zinc-600">
+              You already have an active client portal. Upgrade to the Pro plan ($19/month) to unlock:
+            </p>
+            <ul className="mt-4 space-y-2.5 text-sm text-zinc-600">
+              <li className="flex items-start gap-3">
+                <span aria-hidden className="mt-[7px] h-px w-3 shrink-0 bg-zinc-300" />
+                <span><strong>Unlimited client portals</strong> for all current and future projects</span>
               </li>
-              <li className="flex items-center gap-2">
-                <Check className="size-4 text-emerald-600" />
-                <strong>Custom branding</strong> (your logo and custom brand colors)
+              <li className="flex items-start gap-3">
+                <span aria-hidden className="mt-[7px] h-px w-3 shrink-0 bg-zinc-300" />
+                <span><strong>Custom branding</strong> (your custom logo & brand accent colors)</span>
               </li>
-              <li className="flex items-center gap-2">
-                <Check className="size-4 text-emerald-600" />
-                <strong>Realtime read receipts</strong> & activity feeds
+              <li className="flex items-start gap-3">
+                <span aria-hidden className="mt-[7px] h-px w-3 shrink-0 bg-zinc-300" />
+                <span><strong>Realtime read receipts</strong> and deliverable viewing trail</span>
               </li>
-              <li className="flex items-center gap-2">
-                <Check className="size-4 text-emerald-600" />
-                <strong>Priority support</strong>
+              <li className="flex items-start gap-3">
+                <span aria-hidden className="mt-[7px] h-px w-3 shrink-0 bg-zinc-300" />
+                <span><strong>Priority support</strong> directly from the team</span>
               </li>
             </ul>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <UpgradeButton size="lg" className="w-full bg-[#6C3FE8] text-white hover:bg-[#582ed1] sm:w-auto" />
-            <Link href="/dashboard/projects" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full">
-                <ArrowLeft className="mr-2 size-4" />
-                Back to projects
+          <div className="flex flex-col gap-3 border-t border-zinc-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <UpgradeButton size="default" text="Upgrade to Pro — $19/mo" />
+            <Link href="/dashboard/projects">
+              <Button variant="outline" size="sm" className="border-zinc-200 text-[#151B45] hover:bg-zinc-100">
+                View existing projects
               </Button>
             </Link>
           </div>
