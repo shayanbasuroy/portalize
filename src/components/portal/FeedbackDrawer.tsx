@@ -113,9 +113,9 @@ export function FeedbackDrawer({ open, onOpenChange, deliverable, slug }: Feedba
 
           <Button
             type="submit"
-            className="w-full"
+            className="w-full bg-[#151B45] text-[#F8F7FC] hover:bg-zinc-800"
             disabled={isPending}
-            style={{ backgroundColor: 'var(--brand-color)' }}
+            style={{ backgroundColor: 'var(--brand-color, #151B45)' }}
           >
             {isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

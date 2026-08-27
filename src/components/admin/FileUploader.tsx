@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Upload, X, File as FileIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createFileDeliverableAction } from "@/app/actions/deliverables";
@@ -10,21 +10,32 @@ import { useFormStatus } from "react-dom";
 function SubmitButton({ hasFile }: { hasFile: boolean }) {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full mt-4" disabled={!hasFile || pending}>
+    <Button type="submit" className="w-full mt-4 bg-[#151B45] text-[#F8F7FC] hover:bg-zinc-800" disabled={!hasFile || pending}>
       {pending ? "Uploading..." : "Upload File"}
     </Button>
   );
 }
 
-export function FileUploader({ projectId, freelancerId }: { projectId: string, freelancerId: string }) {
+export function FileUploader({ projectId }: { projectId: string; freelancerId?: string }) {
   const [file, setFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [state, formAction] = useActionState(createFileDeliverableAction, null);
 
+  useEffect(() => {
+    if (state?.success) {
+      setFile(null);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }, [state]);
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
+      const droppedFile = e.dataTransfer.files[0];
+      setFile(droppedFile);
+      if (inputRef.current) {
+        inputRef.current.files = e.dataTransfer.files;
+      }
     }
   };
 

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useActionState } from "react";
+import { useState, useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { createLinkDeliverableAction } from "@/app/actions/deliverables";
 import { Input } from "@/components/ui/input";
@@ -12,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full" disabled={pending}>
+    <Button type="submit" className="w-full bg-[#151B45] text-[#F8F7FC] hover:bg-zinc-800" disabled={pending}>
       {pending ? "Adding Link..." : "Add Link"}
     </Button>
   );
@@ -21,6 +20,14 @@ function SubmitButton() {
 export function LinkEmbedForm({ projectId }: { projectId: string }) {
   const [state, formAction] = useActionState(createLinkDeliverableAction, null);
   const [url, setUrl] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state?.success) {
+      setUrl("");
+      formRef.current?.reset();
+    }
+  }, [state]);
 
   const getEmbedType = (url: string) => {
     if (!url) return null;

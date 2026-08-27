@@ -9,7 +9,7 @@ import {
   regeneratePinAction,
 } from "@/app/actions/projects";
 import { vibrate } from "@/lib/haptics";
-import { Trash2 } from "lucide-react";
+import { Trash2, ExternalLink } from "lucide-react";
 
 const statusLabels: Record<string, string> = {
   in_review: "In review",
@@ -65,7 +65,19 @@ export function ProjectHeader({
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-400">
                   Portal link
                 </p>
-                <CopyButton text={portalLink} className="h-7 w-7" />
+                <div className="flex items-center gap-1.5">
+                  <a
+                    href={`/p/${project.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-7 items-center gap-1 border border-zinc-200 px-2 font-mono text-[11px] text-[#151B45] hover:bg-zinc-100"
+                    title="Open portal in new tab"
+                  >
+                    <ExternalLink className="size-3" />
+                    <span>Open</span>
+                  </a>
+                  <CopyButton text={portalLink} className="h-7 w-7" />
+                </div>
               </div>
               <p className="mt-2 truncate font-mono text-[11px] text-[#151B45]">
                 {portalLink}

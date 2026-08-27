@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { createCodeDeliverableAction } from "@/app/actions/deliverables";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full" disabled={pending}>
+    <Button type="submit" className="w-full bg-[#151B45] text-[#F8F7FC] hover:bg-zinc-800" disabled={pending}>
       {pending ? "Adding Code..." : "Add Code Snippet"}
     </Button>
   );
@@ -20,6 +20,13 @@ function SubmitButton() {
 
 export function CodeSnippetForm({ projectId }: { projectId: string }) {
   const [state, formAction] = useActionState(createCodeDeliverableAction, null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state?.success) {
+      formRef.current?.reset();
+    }
+  }, [state]);
 
   const languages = [
     { value: "typescript", label: "TypeScript" },
