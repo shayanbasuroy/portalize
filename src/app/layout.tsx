@@ -17,6 +17,14 @@ export const metadata: Metadata = {
   title: "Portalize | Zero-login client portals for freelancers",
   description:
     "Share project deliverables with clients through a private, zero-login portal. Preview, feedback, approvals, and payment-gated downloads.",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: [{ url: "/icon.png", type: "image/png" }],
+    shortcut: ["/icon.png"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

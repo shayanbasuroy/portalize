@@ -148,3 +148,8 @@ Replaced the 3 text rows with flat cells, each carrying a mini mockup:
 - **Shared inView trigger** — rewired all animation logic inside the features bento cells (`WatermarkPreview`, `ReadReceiptToast`, `LoginComparison`) to fire from a single `useInView` observer on the parent `Bento` cell (via React Context), instead of each internal element registering its own independent `whileInView` / `IntersectionObserver`.
 - **Eliminated stacked trigger delay** — previously, entering a cell caused a cascade of separate viewport callbacks at `-40px` margins each, making mockup animations trickle in over ~800ms. Now all child animations receive the same `inView` signal simultaneously and complete within ~400ms of the cell entering view.
 - **Tighter animation values** — reduced internal stagger delays (max 0.38s), travel distances, and spring stiffness tuned for a snappier, more confident feel without losing the premium quality of the motion.
+
+### Favicon & Branding
+- **Custom Portalize Favicon** — replaced the default Vercel/Next.js favicon with the official Portalize icon (`icon.png`), updating `/public/favicon.ico`, `/src/app/favicon.ico`, and `/src/app/icon.png` along with full `metadata.icons` definitions in `src/app/layout.tsx`.
+
+
