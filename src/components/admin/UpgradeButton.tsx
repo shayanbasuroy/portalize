@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { createUpgradeCheckoutAction, createCustomerPortalAction } from "@/app/actions/billing";
 import { Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
@@ -24,14 +23,15 @@ export function UpgradeButton({
   const handleUpgrade = async () => {
     try {
       setLoading(true);
-      const res = await createUpgradeCheckoutAction();
-      if (res.error) {
-        toast.error(res.error);
+      const res = await fetch("/api/billing/checkout", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        toast.error(data.error || "Failed to start checkout");
         setLoading(false);
         return;
       }
-      if (res.url) {
-        window.location.href = res.url;
+      if (data.url) {
+        window.location.href = data.url;
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to start checkout");
@@ -69,14 +69,15 @@ export function ManageBillingButton({ className = "" }: { className?: string }) 
   const handleManage = async () => {
     try {
       setLoading(true);
-      const res = await createCustomerPortalAction();
-      if (res.error) {
-        toast.error(res.error);
+      const res = await fetch("/api/billing/portal", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        toast.error(data.error || "Failed to open billing portal");
         setLoading(false);
         return;
       }
-      if (res.url) {
-        window.location.href = res.url;
+      if (data.url) {
+        window.location.href = data.url;
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to open billing portal");
