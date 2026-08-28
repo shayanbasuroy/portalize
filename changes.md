@@ -227,3 +227,35 @@ Completely removed generic AI-slop styling (purple `#6C3FE8` backgrounds, `Spark
 - **Portal Auth Action (`src/app/actions/portal.ts`)**:
   - Connected `sendPortalOpenedNotification` into `verifyPinAction`.
 
+
+## 2026-08-28 (Session 8) — Pricing, Subscription Fixes & PLG Viral Loop
+
+### Pricing: Pro Plan lowered to $9/mo
+- Created a new Dodo Payments product (`pdt_0NmM4RQAbeRxp5dRQUp7O`) priced at $9.00/mo recurring.
+- Updated all pricing references from $19 → $9 across:
+  - `src/components/landing/pricing.tsx`
+  - `src/components/admin/UpgradeButton.tsx`
+  - `src/app/(admin)/dashboard/page.tsx`
+  - `src/app/(admin)/dashboard/projects/new/page.tsx`
+  - `src/components/admin/SettingsForm.tsx`
+  - `src/lib/dodo.ts` (default product ID updated)
+
+### False-Positive Upgrade Toast Fix
+- **`src/components/admin/SettingsForm.tsx`**: Fixed a bug where the "Welcome to Portalize Pro!" success toast fired even when payment was cancelled or failed.
+  - Now verifies `profile.subscription_tier === 'pro'` before showing the success toast.
+  - Shows a descriptive error toast if payment was not completed.
+  - Clears `?upgraded=true` query param from the URL via `window.history.replaceState` after reading it, preventing the toast from re-firing on page reload.
+
+### PLG Viral Loop — Post-Approval Client Banner
+- **`src/components/portal/PortalView.tsx`**: Added a subtle product-led growth referral strip that appears at the bottom of the deliverables panel when a client approves a project.
+  - Shows: "Project approved · Deliver your own client projects with Portalize free →" linking to portalize.site.
+  - Styled to the Minimalist Editorial system: `bg-zinc-50/70`, `border-zinc-200`, `font-mono text-[11px]`, no popups or modal interruptions.
+  - Only visible post-approval — non-intrusive during active client review.
+
+### Landing Page Copy & Interactive Demo (Attempted — Reverted)
+The following changes were implemented then reverted at user request (commit `89b099b`):
+- **`src/components/landing/hero.tsx`**: Rewrote headline to "Stop sending Google Drive links. / Never get ghosted on final invoices." with updated emotional sub-copy and CTA.
+- **`src/components/landing/features.tsx`**: Rewrote all 4 bento card titles to lead with emotional outcomes ("Never get ghosted on final invoices", "Know the exact minute they open it", "No passwords. 1 link + 4-digit PIN").
+- **`src/components/landing/problem.tsx`**: Rewrote Before/After items with high-converting freelancer trauma triggers (17-email thread, expired WeTransfer, ghosted 50% invoice, timestamped receipts).
+- **`src/components/landing/interactive-hero-demo.tsx`** (created then deleted): Full interactive client portal sandbox — on-screen PIN keypad, live payment unlock toggle, watermark simulation, realtime activity feed mockup.
+- All 4 landing page changes were reverted; original design restored. The PLG banner on `PortalView.tsx` was retained.
