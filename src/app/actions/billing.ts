@@ -9,7 +9,7 @@ function getAppUrl(): string {
 }
 
 /**
- * Creates a Dodo Payments checkout session for the $19/mo Pro subscription.
+ * Creates a Dodo Payments checkout session for the $9/mo Pro subscription.
  */
 export async function createUpgradeCheckoutAction(): Promise<{ url?: string; error?: string }> {
   const user = await getCurrentUser();

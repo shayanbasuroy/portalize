@@ -61,7 +61,7 @@ export default async function NewProjectPage() {
 
           <div className="py-6">
             <p className="text-sm text-zinc-600">
-              You already have an active client portal. Upgrade to the Pro plan ($19/month) to unlock:
+              You already have an active client portal. Upgrade to the Pro plan ($9/month) to unlock:
             </p>
             <ul className="mt-4 space-y-2.5 text-sm text-zinc-600">
               <li className="flex items-start gap-3">
@@ -84,7 +84,7 @@ export default async function NewProjectPage() {
           </div>
 
           <div className="flex flex-col gap-3 border-t border-zinc-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <UpgradeButton size="default" text="Upgrade to Pro — $19/mo" />
+            <UpgradeButton size="default" text="Upgrade to Pro — $9/mo" />
             <Link href="/dashboard/projects">
               <Button variant="outline" size="sm" className="border-zinc-200 text-[#151B45] hover:bg-zinc-100">
                 View existing projects

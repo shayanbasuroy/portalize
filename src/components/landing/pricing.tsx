@@ -32,7 +32,7 @@ const plans: Plan[] = [
   {
     name: "Pro Freelancer",
     tagline: "For full-time freelancers shipping every week.",
-    price: 19,
+    price: 9,
     period: "/ month",
     cta: "Start 14-day free trial",
     popular: true,

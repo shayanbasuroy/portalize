@@ -16,7 +16,7 @@ export function UpgradeButton({
   variant = "default",
   className = "bg-[#151B45] text-[#F8F7FC] hover:bg-zinc-800",
   size = "default",
-  text = "Upgrade to Pro — $19/mo",
+  text = "Upgrade to Pro — $9/mo",
 }: UpgradeButtonProps) {
   const [loading, setLoading] = useState(false);
 

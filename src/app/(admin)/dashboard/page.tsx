@@ -73,7 +73,7 @@ export default async function DashboardPage() {
                 You have used {projectsCount} of 1 free portal. Upgrade to Pro for unlimited client deliveries and custom branding.
               </p>
             </div>
-            <UpgradeButton size="sm" text="Upgrade to Pro — $19/mo" />
+            <UpgradeButton size="sm" text="Upgrade to Pro — $9/mo" />
           </div>
         </div>
       )}

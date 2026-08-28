@@ -57,7 +57,7 @@ export function SettingsForm({ profile }: { profile: FreelancerProfile }) {
               Subscription
             </p>
             <h2 className="mt-0.5 text-base font-medium tracking-tight text-[#151B45]">
-              {isPro ? "Pro Plan — $19 / month" : "Free Plan"}
+              {isPro ? "Pro Plan — $9 / month" : "Free Plan"}
             </h2>
           </div>
           <span className="font-mono text-[11px] text-zinc-400">
@@ -92,7 +92,7 @@ export function SettingsForm({ profile }: { profile: FreelancerProfile }) {
             {isPro ? (
               <ManageBillingButton />
             ) : (
-              <UpgradeButton size="sm" text="Upgrade to Pro — $19/mo" />
+              <UpgradeButton size="sm" text="Upgrade to Pro — $9/mo" />
             )}
           </div>
         </div>
@@ -213,7 +213,7 @@ export function SettingsForm({ profile }: { profile: FreelancerProfile }) {
               />
               {!isPro && (
                 <p className="text-xs text-zinc-500">
-                  Custom branding is available on the Pro plan ($19/mo).
+                  Custom branding is available on the Pro plan ($9/mo).
                 </p>
               )}
             </div>
