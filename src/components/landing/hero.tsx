@@ -4,13 +4,11 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
-import { PortalFigure } from "@/components/landing/portal-figure";
+import { InteractiveHeroDemo } from "@/components/landing/interactive-hero-demo";
 import { EASE } from "@/components/landing/reveal";
 
 /**
- * Left-aligned editorial hero. The two-line headline rises from behind a
- * clip mask, the eyebrow, body and CTAs stagger in after it, and the product
- * figure settles flat from a slight perspective tilt.
+ * Left-aligned editorial hero with high-converting positioning and interactive sandbox.
  */
 export function Hero() {
   return (
@@ -24,15 +22,15 @@ export function Hero() {
             className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500"
           >
             <span className="h-px w-8 bg-zinc-400" aria-hidden />
-            For freelancers &amp; studios
+            Private Client Delivery &amp; Escrow
           </motion.p>
 
-          <h1 className="mt-6 text-[2.75rem] font-medium leading-[0.98] tracking-[-0.03em] text-[#151B45] sm:text-6xl lg:text-7xl">
+          <h1 className="mt-6 text-[2.5rem] font-medium leading-[1.02] tracking-[-0.03em] text-[#151B45] sm:text-5xl lg:text-[4rem]">
             <MaskedLine delay={0.12}>
-              <span className="text-zinc-400">You finished the work.</span>
+              <span className="text-zinc-400">Stop sending Google Drive links.</span>
             </MaskedLine>
             <MaskedLine delay={0.24}>
-              Get paid before it leaves.
+              Never get ghosted on final invoices.
             </MaskedLine>
           </h1>
 
@@ -42,9 +40,9 @@ export function Hero() {
             transition={{ duration: 0.7, ease: EASE, delay: 0.42 }}
             className="mt-7 max-w-xl text-lg leading-relaxed text-zinc-600"
           >
-            Portalize is a zero-login client portal. Send one link, let clients
-            preview every deliverable in the browser, and keep downloads locked
-            until the invoice settles.
+            No passwords for clients to forget. Send 1 link with a 4-digit PIN.
+            Clients preview every file watermarked in-browser, while high-res
+            downloads stay locked until the invoice settles.
           </motion.p>
 
           <motion.div
@@ -57,7 +55,7 @@ export function Hero() {
               href="/signup"
               className="group inline-flex items-center justify-center gap-2 bg-[#151B45] px-7 py-3.5 text-sm font-medium text-[#F8F7FC] transition-colors duration-150 ease-out hover:bg-zinc-800"
             >
-              Create your portal
+              Create free client portal
               <motion.span
                 className="inline-flex"
                 animate={{ x: [0, 3, 0] }}
@@ -80,20 +78,18 @@ export function Hero() {
             transition={{ duration: 0.7, ease: EASE, delay: 0.64 }}
             className="mt-8 font-mono text-xs tracking-[0.04em] text-zinc-400"
           >
-            No client accounts · 4-digit PIN · Watermarked previews
+            Zero client logins · 4-digit PIN · Watermarked previews · Realtime read receipts
           </motion.p>
         </div>
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 40, rotateX: 8 }}
-        whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.9, ease: EASE }}
-        style={{ transformPerspective: 1200 }}
-        className="origin-top"
+        transition={{ duration: 0.8, ease: EASE }}
       >
-        <PortalFigure />
+        <InteractiveHeroDemo />
       </motion.div>
     </section>
   );

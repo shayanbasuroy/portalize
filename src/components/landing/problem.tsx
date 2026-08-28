@@ -5,17 +5,17 @@ import { motion } from "motion/react";
 import { EASE, Heading, Reveal } from "@/components/landing/reveal";
 
 const before = [
-  "A .zip in a Google Drive link, buried in an email thread",
-  "Clients can't preview anything without downloading it first",
-  "The invoice is sent separately — then chased, then chased again",
-  "Feedback scattered across email, Slack, and four DMs",
+  "A 17-email thread with expired WeTransfer and messy Dropbox links",
+  "Clients download high-res files, then ghost your final 50% invoice",
+  "Awkwardly asking: 'Hey, did you get a chance to review the files yet?'",
+  "Clients complaining they can't open .fig, .zip, or code on mobile",
 ];
 
 const after = [
-  "One branded link holds the entire delivery",
-  "Every file renders in the browser, watermarked until paid",
-  "Downloads unlock the moment you mark the invoice paid",
-  "Feedback and approvals live in a single thread",
+  "1 permanent, branded client link with a simple 4-digit PIN",
+  "Watermarked in-browser previews keep your work protected until paid",
+  "Timestamped read receipts prove the exact minute they opened it",
+  "Every file, code snippet, and Figma board renders directly in-browser",
 ];
 
 /**
@@ -30,17 +30,17 @@ export function Problem() {
         <div className="max-w-2xl">
           <Reveal>
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
-              The problem
+              The Reality
             </p>
           </Reveal>
           <Heading className="mt-6 text-3xl font-medium leading-[1.05] tracking-[-0.02em] text-[#151B45] sm:text-4xl lg:text-5xl">
-            The last mile of a project is the messy part.
+            Freelancing shouldn&apos;t end in awkward invoice chasing.
           </Heading>
           <Reveal delay={0.1}>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-600">
-              You delivered great work. Then it scattered across a dozen links
-              while the invoice sat unopened. Portalize turns that handoff into a
-              single, calm page.
+              You did the hard work. Delivering it shouldn&apos;t mean risking unpaid
+              balances or messy email attachments. Portalize replaces the chaos with
+              a single, professional delivery portal.
             </p>
           </Reveal>
         </div>

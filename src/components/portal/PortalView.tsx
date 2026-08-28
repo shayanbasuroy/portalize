@@ -139,6 +139,28 @@ export function PortalView({ initialProject, initialDeliverables }: PortalViewPr
               </form>
             </div>
           )}
+
+          {/* Post-Approval Viral Micro-Banner for Clients */}
+          {isApproved && (
+            <div className="border-t border-zinc-200 bg-zinc-50/70 px-5 py-4 sm:px-6">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+                  <p className="text-xs font-medium text-[#151B45]">
+                    Project approved
+                  </p>
+                </div>
+                <a
+                  href="https://portalize.site"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 font-mono text-[11px] text-zinc-500 underline underline-offset-4 hover:text-[#151B45]"
+                >
+                  <span>Deliver your own client projects with Portalize free →</span>
+                </a>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}
