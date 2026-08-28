@@ -24,45 +24,49 @@ export function Features() {
         <div className="max-w-2xl">
           <Reveal>
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500">
-              Protection &amp; Control
+              Features
             </p>
           </Reveal>
           <Heading className="mt-6 text-3xl font-medium leading-[1.05] tracking-[-0.02em] text-[#151B45] sm:text-4xl lg:text-5xl">
-            Look like an elite studio. Protect your work.
+            Everything a delivery needs, on one page.
           </Heading>
           <Reveal delay={0.1}>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-600">
-              No passwords to forget, no unwatermarked files leaked before payment,
-              and no excuses about &ldquo;I haven&apos;t opened it yet.&rdquo;
+              No more chasing files, invoices, and feedback across five apps. It
+              all lives behind one link.
             </p>
           </Reveal>
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-px border border-zinc-200 bg-zinc-200 lg:grid-cols-3">
-          <Bento n="01" tag="in-browser" title="Every deliverable previews in-browser" className="lg:col-span-2">
+          <Bento n="01" tag="in-browser" title="Every file previews in-browser" className="lg:col-span-2">
             <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">
-              Figma boards, syntax-highlighted code, PDFs, high-res photos, and video render directly in-browser. Zero downloads or special apps needed.
+              Images, PDFs, Figma boards, video, and code — any deliverable
+              renders right in the browser, so clients preview without
+              downloading a thing.
             </p>
             <PreviewEngine />
           </Bento>
 
-          <Bento n="02" tag="payment-lock" title="Never get ghosted on final invoices">
+          <Bento n="02" tag="automatic" title="Payment lock protection">
             <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">
-              Previews stay watermarked and high-res deliverables stay locked until you mark the invoice paid.
+              Previews stay watermarked and downloads stay sealed until you mark
+              the invoice paid.
             </p>
             <WatermarkPreview />
           </Bento>
 
-          <Bento n="03" tag="read-receipts" title="Know the exact minute they open it">
+          <Bento n="03" tag="realtime" title="Read receipts">
             <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">
-              Realtime timestamps the second they open the portal — so they can never claim &ldquo;I haven&apos;t had time to check it yet.&rdquo;
+              Know the moment a client opens the portal and what they linger on.
             </p>
             <ReadReceiptToast />
           </Bento>
 
-          <Bento n="04" tag="zero-friction" title="No passwords. 1 link + 4-digit PIN" className="lg:col-span-2">
+          <Bento n="04" tag="zero-login" title="Zero client logins" className="lg:col-span-2">
             <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">
-              Clients never have to create an account, verify an email, or reset a password. One sleek link with a 4-digit PIN.
+              Your client opens one link and types a 4-digit PIN. No accounts to
+              create, no passwords to reset, nothing to install.
             </p>
             <LoginComparison />
           </Bento>
