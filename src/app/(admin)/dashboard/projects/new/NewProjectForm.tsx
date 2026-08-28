@@ -49,6 +49,45 @@ export function NewProjectForm({ clients }: { clients: { id: string, client_name
         )}
       </div>
 
+      <div className="border-t border-zinc-100 pt-4 space-y-4">
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-400">
+            Payment Lock (Optional)
+          </p>
+          <p className="mt-0.5 text-xs text-zinc-500">
+            Attach a payment link to display a &ldquo;Pay Invoice&rdquo; button on locked deliverables.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="invoice_url" className="text-xs text-zinc-600">
+              Payment Link URL
+            </Label>
+            <Input
+              id="invoice_url"
+              name="invoice_url"
+              type="url"
+              placeholder="https://buy.stripe.com/..."
+              className="text-xs font-mono"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="invoice_amount" className="text-xs text-zinc-600">
+              Invoice Amount
+            </Label>
+            <Input
+              id="invoice_amount"
+              name="invoice_amount"
+              type="text"
+              placeholder="$1,500 USD"
+              className="text-xs font-mono"
+            />
+          </div>
+        </div>
+      </div>
+
       {state?.error && (
         <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
           {state.error}

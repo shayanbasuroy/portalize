@@ -205,15 +205,25 @@ Completely removed generic AI-slop styling (purple `#6C3FE8` backgrounds, `Spark
 - Upgrade / Manage Billing buttons placed at the bottom of the card body above a `border-t border-zinc-100` divider.
 - Removed unused `ShieldCheck`, `Sparkles`, `Check` imports.
 
-## 2026-08-28 (Session 6) — Pricing Optimization ($9 / month)
-- Repositioned Portalize Pro as a specialized \$9/month impulse-buy micro-utility tool.
-- Created official \$9/month product in Dodo Payments:
-  - Product ID: `pdt_0NmM4RQAbeRxp5dRQUp7O` (\$9.00 USD / month recurring).
-- Updated product IDs in `src/lib/dodo.ts` and `.env.local`.
-- Synchronized all \$19 price tags to \$9 across:
-  - Landing page pricing bento (`src/components/landing/pricing.tsx`)
-  - Upgrade CTA button (`src/components/admin/UpgradeButton.tsx`)
-  - Admin dashboard banner (`src/app/(admin)/dashboard/page.tsx`)
-  - New project paywall card (`src/app/(admin)/dashboard/projects/new/page.tsx`)
-  - Settings & billing form (`src/components/admin/SettingsForm.tsx`)
+## 2026-08-28 (Session 7) — Conversion Levers: Payment Link & Instant Read-Receipt Email Notifications
+
+### Direct Invoice / Payment Link on Locked Client Portals
+- **Database Schema (`009_project_invoice_link.sql`)**:
+  - Added `invoice_url` and `invoice_amount` columns to `public.projects` (applied to live Supabase DB).
+- **Freelancer Dashboard (`ProjectHeader.tsx` & `InvoiceSettingsDialog.tsx`)**:
+  - Added `InvoiceSettingsDialog` allowing freelancers to attach or edit their Stripe Payment Link, PayPal, Wise, or invoice URL and optional amount (e.g. `$1,500`).
+  - Added `updateProjectInvoiceAction` in `src/app/actions/projects.ts`.
+  - Updated `NewProjectForm.tsx` to accept optional invoice link during project creation.
+- **Client Portal (`PaymentBanner.tsx` & `PortalView.tsx`)**:
+  - Updated `PaymentBanner` to display a sharp, branded 1-click **"Pay Invoice ($X,XXX) ↗"** CTA button linking directly to the freelancer's payment link.
+  - Added payment link shortcut in the portal sidebar under payment status.
+  - Added viral product-led growth (PLG) footer badge (`"Delivered with Portalize · Private client delivery for freelancers"`).
+
+### Instant Read-Receipt Email Notification
+- **Email Service (`src/lib/email.ts`)**:
+  - Added `sendPortalOpenedNotification`: triggers an email to the freelancer the instant a client unlocks their portal with their 4-digit PIN.
+  - Added `sendDeliverablePreviewedNotification`: triggers an email when a specific deliverable is rendered.
+  - Styled with Swiss Minimalist HTML templates (`#151B45` Portal Navy headers, monospace timestamps, hairline rules).
+- **Portal Auth Action (`src/app/actions/portal.ts`)**:
+  - Connected `sendPortalOpenedNotification` into `verifyPinAction`.
 

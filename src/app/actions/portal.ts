@@ -13,6 +13,7 @@ import { isRateLimited, recordFailure, clearFailures } from '@/lib/rate-limit'
 import {
   sendChangeRequestNotification,
   sendApprovalNotification,
+  sendPortalOpenedNotification,
 } from '@/lib/email'
 
 export type PortalActionState = {
@@ -124,6 +125,7 @@ export async function verifyPinAction(
   })
 
   await logActivity(project.id, 'project_opened', 'Client opened the portal')
+  await sendPortalOpenedNotification(project.id)
 
   redirect(`/p/${slug}`)
 }

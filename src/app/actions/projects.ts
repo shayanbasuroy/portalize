@@ -9,6 +9,8 @@ import { generateSlug, generatePin, hashPin } from "@/lib/security";
 const projectSchema = z.object({
   client_id: z.string().min(1, "Client is required"),
   title: z.string().min(1, "Title is required"),
+  invoice_url: z.string().optional().nullable(),
+  invoice_amount: z.string().optional().nullable(),
 });
 
 export async function createProjectAction(prevState: any, formData: FormData) {
@@ -17,16 +19,21 @@ export async function createProjectAction(prevState: any, formData: FormData) {
 
   if (!user) return { error: "Not authenticated" };
 
+  const rawUrl = formData.get("invoice_url") as string | null;
+  const rawAmount = formData.get("invoice_amount") as string | null;
+
   const validatedFields = projectSchema.safeParse({
     client_id: formData.get("client_id"),
     title: formData.get("title"),
+    invoice_url: rawUrl ? rawUrl.trim() : undefined,
+    invoice_amount: rawAmount ? rawAmount.trim() : undefined,
   });
 
   if (!validatedFields.success) {
     return { error: "Invalid fields", fieldErrors: validatedFields.error.flatten().fieldErrors };
   }
 
-  const { title, client_id } = validatedFields.data;
+  const { title, client_id, invoice_url, invoice_amount } = validatedFields.data;
 
   // Hard server-side tier enforcement: Free tier is limited to 1 active project
   const [{ data: freelancer }, { count: projectCount }] = await Promise.all([
@@ -65,6 +72,8 @@ export async function createProjectAction(prevState: any, formData: FormData) {
       access_pin: hashedPin,
       payment_status: "unpaid",
       project_status: "in_review",
+      invoice_url: invoice_url || null,
+      invoice_amount: invoice_amount || null,
     })
     .select()
     .single();
@@ -142,6 +151,31 @@ export async function toggleWatermarkAction(formData: FormData): Promise<void> {
   if (error) throw new Error(error.message);
 
   revalidatePath(`/dashboard/projects/${id}`);
+}
+
+export async function updateProjectInvoiceAction(formData: FormData): Promise<{ error?: string; success?: boolean }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Not authenticated" };
+
+  const id = formData.get("id") as string;
+  const rawUrl = formData.get("invoice_url") as string | null;
+  const rawAmount = formData.get("invoice_amount") as string | null;
+
+  const invoice_url = rawUrl ? rawUrl.trim() : null;
+  const invoice_amount = rawAmount ? rawAmount.trim() : null;
+
+  const { error } = await supabase
+    .from("projects")
+    .update({ invoice_url, invoice_amount })
+    .eq("id", id)
+    .eq("freelancer_id", user.id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/dashboard/projects/${id}`);
+  return { success: true };
 }
 
 export async function regeneratePinAction(formData: FormData): Promise<void> {

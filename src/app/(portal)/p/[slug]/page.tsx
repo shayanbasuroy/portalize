@@ -59,7 +59,7 @@ export default async function PortalPage({ params }: PortalPageProps) {
 
   const { data: project, error } = await admin
     .from('projects')
-    .select('id, slug, title, project_status, payment_status, watermark_enabled, freelancers(business_name, logo_url, brand_color), deliverables(*, feedback_comments(*))')
+    .select('id, slug, title, project_status, payment_status, watermark_enabled, invoice_url, invoice_amount, freelancers(business_name, logo_url, brand_color), deliverables(*, feedback_comments(*))')
     .eq('slug', slug)
     .single()
 

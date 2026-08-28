@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/admin/CopyButton";
+import { InvoiceSettingsDialog } from "@/components/admin/InvoiceSettingsDialog";
 import {
   togglePaymentStatus,
   deleteProjectAction,
@@ -108,6 +109,20 @@ export function ProjectHeader({
                   No PIN yet — regenerate to create one you can copy.
                 </p>
               )}
+            </div>
+
+            <div className="flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-[#151B45]">Payment / Invoice Link</p>
+                <p className="truncate font-mono text-[11px] text-zinc-400">
+                  {project.invoice_url ? `${project.invoice_amount ? `${project.invoice_amount} · ` : ""}${project.invoice_url}` : "None configured"}
+                </p>
+              </div>
+              <InvoiceSettingsDialog
+                projectId={project.id}
+                initialInvoiceUrl={project.invoice_url}
+                initialInvoiceAmount={project.invoice_amount}
+              />
             </div>
 
             <div className="flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">

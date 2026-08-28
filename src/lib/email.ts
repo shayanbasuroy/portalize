@@ -109,6 +109,77 @@ export async function sendApprovalNotification(
   })
 }
 
+export async function sendPortalOpenedNotification(projectId: string): Promise<void> {
+  const ctx = await getProjectContext(projectId)
+  if (!ctx) return
+
+  const now = new Date().toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+
+  await sendEmail({
+    to: ctx.email,
+    subject: `⚡ Client opened portal for "${ctx.title}"`,
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; border: 1px solid #e4e4e7; background: #ffffff;">
+        <p style="font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: #71717a; margin-bottom: 8px;">
+          PORTALIZE · REALTIME READ RECEIPT
+        </p>
+        <h2 style="font-size: 18px; font-weight: 500; color: #151B45; margin: 0 0 16px 0;">
+          Client entered "${escapeHtml(ctx.title)}"
+        </h2>
+        <p style="font-size: 14px; line-height: 1.5; color: #3f3f46; margin: 0 0 20px 0;">
+          Your client just verified the 4-digit PIN and accessed the portal at <strong>${now}</strong>.
+        </p>
+        <div style="border-top: 1px solid #e4e4e7; padding-top: 16px;">
+          <a href="${portalUrl(ctx.slug)}" style="display: inline-block; background: #151B45; color: #F8F7FC; font-size: 13px; font-weight: 500; text-decoration: none; padding: 8px 16px;">
+            Open Client Portal →
+          </a>
+        </div>
+      </div>
+    `,
+  })
+}
+
+export async function sendDeliverablePreviewedNotification(
+  projectId: string,
+  deliverableTitle: string
+): Promise<void> {
+  const ctx = await getProjectContext(projectId)
+  if (!ctx) return
+
+  const now = new Date().toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+
+  await sendEmail({
+    to: ctx.email,
+    subject: `👀 Previewed: ${deliverableTitle} (${ctx.title})`,
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; border: 1px solid #e4e4e7; background: #ffffff;">
+        <p style="font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: #71717a; margin-bottom: 8px;">
+          PORTALIZE · DELIVERABLE PREVIEWED
+        </p>
+        <h2 style="font-size: 18px; font-weight: 500; color: #151B45; margin: 0 0 16px 0;">
+          "${escapeHtml(deliverableTitle)}" was previewed
+        </h2>
+        <p style="font-size: 14px; line-height: 1.5; color: #3f3f46; margin: 0 0 20px 0;">
+          The client rendered and inspected this deliverable on project <strong>"${escapeHtml(ctx.title)}"</strong> at <strong>${now}</strong>.
+        </p>
+        <div style="border-top: 1px solid #e4e4e7; padding-top: 16px;">
+          <a href="${portalUrl(ctx.slug)}" style="display: inline-block; background: #151B45; color: #F8F7FC; font-size: 13px; font-weight: 500; text-decoration: none; padding: 8px 16px;">
+            Open Client Portal →
+          </a>
+        </div>
+      </div>
+    `,
+  })
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')

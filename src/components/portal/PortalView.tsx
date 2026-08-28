@@ -86,7 +86,12 @@ export function PortalView({ initialProject, initialDeliverables }: PortalViewPr
           </div>
 
           {/* Payment banner */}
-          {project.payment_status === 'unpaid' && <PaymentBanner />}
+          {project.payment_status === 'unpaid' && (
+            <PaymentBanner
+              invoiceUrl={project.invoice_url}
+              invoiceAmount={project.invoice_amount}
+            />
+          )}
 
           {/* Deliverables */}
           <div className="mt-6 divide-y divide-zinc-200 border-t border-zinc-200">
@@ -190,6 +195,21 @@ export function PortalView({ initialProject, initialDeliverables }: PortalViewPr
                     {project.payment_status === 'paid' ? 'Paid' : 'Pending'}
                   </dd>
                 </div>
+                {project.payment_status === 'unpaid' && project.invoice_url && (
+                  <div className="flex items-center justify-between">
+                    <dt className="text-zinc-500">Invoice</dt>
+                    <dd>
+                      <a
+                        href={project.invoice_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-[#151B45] underline underline-offset-4 hover:text-zinc-600"
+                      >
+                        Pay {project.invoice_amount || 'Invoice'} ↗
+                      </a>
+                    </dd>
+                  </div>
+                )}
                 <div className="flex items-center justify-between">
                   <dt className="text-zinc-500">Deliverables</dt>
                   <dd className="font-medium text-[#151B45]">{sorted.length}</dd>
@@ -199,6 +219,22 @@ export function PortalView({ initialProject, initialDeliverables }: PortalViewPr
           </div>
         </aside>
       </div>
+
+      {/* Viral PLG Loop Footer */}
+      <footer className="border-t border-zinc-200 bg-zinc-50/50 py-4 text-center">
+        <p className="font-mono text-[11px] text-zinc-400">
+          Delivered with{' '}
+          <a
+            href="https://portalize.site"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-[#151B45] underline underline-offset-4 hover:text-zinc-600"
+          >
+            Portalize
+          </a>{' '}
+          · Private client delivery for freelancers
+        </p>
+      </footer>
     </div>
   )
 }
