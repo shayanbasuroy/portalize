@@ -37,9 +37,15 @@ export function SettingsForm({ profile }: { profile: FreelancerProfile }) {
 
   useEffect(() => {
     if (searchParams.get("upgraded") === "true") {
-      toast.success("Welcome to Portalize Pro! Your unlimited access is active.");
+      if (isPro) {
+        toast.success("Welcome to Portalize Pro! Your unlimited access is active.");
+      } else {
+        toast.error("Payment was not completed. You remain on the Free plan.");
+      }
+      // Remove query parameter from URL so subsequent refreshes don't re-trigger toast
+      window.history.replaceState(null, "", window.location.pathname);
     }
-  }, [searchParams]);
+  }, [searchParams, isPro]);
 
   return (
     <div className="space-y-8">

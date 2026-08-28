@@ -205,9 +205,15 @@ Completely removed generic AI-slop styling (purple `#6C3FE8` backgrounds, `Spark
 - Upgrade / Manage Billing buttons placed at the bottom of the card body above a `border-t border-zinc-100` divider.
 - Removed unused `ShieldCheck`, `Sparkles`, `Check` imports.
 
-## 2026-08-28 (Session 5) — Dodo Payments Product ID Fix
+
+## 2026-08-28 (Session 5) — Dodo Payments Product ID & Payment Status Toast Fix
 - Identified mismatch where previous product was created under a separate Dodo MCP instance business ID.
 - Generated new official "Portalize Pro" product directly under the user's Dodo Business account (`bus_0NmHbeSkGmbpxJdmyC3oi`):
   - Product ID: `pdt_0NmM0arxqGzLBEyIQdbYk` ($19/mo USD recurring).
 - Updated default `DODO_PRO_PRODUCT_ID` in `src/lib/dodo.ts` and `.env.local`.
 - Verified live checkout session generation against Dodo Payments test API (`https://test.checkout.dodopayments.com/session/...`).
+- **Payment Verification in Settings (`SettingsForm.tsx`)**:
+  - Fixed false-positive "Welcome to Pro" toast on failed/cancelled payments by verifying `profile.subscription_tier === 'pro'`.
+  - Shows `"Payment was not completed. You remain on the Free plan."` if payment did not succeed.
+  - Automatically cleans URL query parameters via `window.history.replaceState` to prevent toast recurrence on refresh.
+
