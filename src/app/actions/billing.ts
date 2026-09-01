@@ -4,8 +4,21 @@ import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { getDodoClient, DODO_PRO_PRODUCT_ID } from "@/lib/dodo";
 import { redirect } from "next/navigation";
 
-function getAppUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+import { headers } from "next/headers";
+
+async function getAppUrl(): Promise<string> {
+  if (process.env.NEXT_PUBLIC_APP_URL && process.env.NEXT_PUBLIC_APP_URL !== "http://localhost:3000") {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+  try {
+    const h = await headers();
+    const host = h.get("x-forwarded-host") || h.get("host");
+    const proto = h.get("x-forwarded-proto") || "https";
+    if (host && !host.includes("localhost")) {
+      return `${proto}://${host}`;
+    }
+  } catch {}
+  return process.env.NEXT_PUBLIC_APP_URL || "https://portalize.site";
 }
 
 /**
@@ -30,7 +43,7 @@ export async function createUpgradeCheckoutAction(): Promise<{ url?: string; err
 
   try {
     const dodo = getDodoClient();
-    const appUrl = getAppUrl();
+    const appUrl = await getAppUrl();
 
     const checkoutSession = await dodo.checkoutSessions.create({
       product_cart: [
@@ -85,7 +98,7 @@ export async function createCustomerPortalAction(): Promise<{ url?: string; erro
 
   try {
     const dodo = getDodoClient();
-    const appUrl = getAppUrl();
+    const appUrl = await getAppUrl();
 
     const portalSession = await dodo.customers.customerPortal.create(freelancer.customer_id, {
       return_url: `${appUrl}/dashboard/settings`,
