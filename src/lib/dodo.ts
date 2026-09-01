@@ -2,7 +2,7 @@ import DodoPayments from "dodopayments";
 
 // Centralized Dodo Payments SDK client
 export const DODO_PRO_PRODUCT_ID =
-  process.env.DODO_PAYMENTS_PRO_PRODUCT_ID || "pdt_0NmM4RQAbeRxp5dRQUp7O";
+  process.env.DODO_PAYMENTS_PRO_PRODUCT_ID || "pdt_0NmdkAeODCEeucC4gqJl7";
 
 export function getDodoClient(): DodoPayments {
   const apiKey = process.env.DODO_PAYMENTS_API_KEY;

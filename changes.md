@@ -286,3 +286,8 @@ The following changes were implemented then reverted at user request (commit `89
 - **`src/components/landing/pricing.tsx`**: Eliminated CountUp $0 flash bug by rendering static `$9`, and clarified *"Starter is free forever, no credit card required"*.
 - **`src/components/landing/faq.tsx`**: Converted accordion to multi-open and pre-expanded critical answers (unlock timing, watermarking, cancellation).
 - **Legal Pages (`src/app/privacy/page.tsx`, `src/app/terms/page.tsx`, `src/components/landing/footer.tsx`)**: Created clean Privacy Policy and Terms of Service pages and linked them in the footer.
+
+### Dodo Payments Configuration Automated
+- Created new live/active $9.00 USD/month recurring subscription product (`pdt_0NmdkAeODCEeucC4gqJl7`) via Dodo Payments API.
+- Configured production webhook endpoint (`ep_3IiR0AU1REFI3ROMwQQj0ZRgj3v`) targeting `https://portalize.site/api/webhooks/dodo` with active signing secret `whsec_79ugAoRBTO3f3dw1X0X0j4LxCIzfBowJ`.
+- Synchronized `src/lib/dodo.ts` default product ID and `.env.local` credentials.
