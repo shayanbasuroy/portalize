@@ -259,3 +259,30 @@ The following changes were implemented then reverted at user request (commit `89
 - **`src/components/landing/problem.tsx`**: Rewrote Before/After items with high-converting freelancer trauma triggers (17-email thread, expired WeTransfer, ghosted 50% invoice, timestamped receipts).
 - **`src/components/landing/interactive-hero-demo.tsx`** (created then deleted): Full interactive client portal sandbox — on-screen PIN keypad, live payment unlock toggle, watermark simulation, realtime activity feed mockup.
 - All 4 landing page changes were reverted; original design restored. The PLG banner on `PortalView.tsx` was retained.
+
+## 2026-09-01 (Session 9) — Launch Readiness: Top-Level SEO, Domain Redirection, Empty States & Legal
+
+### Comprehensive Search Engine Optimization (SEO)
+- **`src/app/robots.ts`**: Generated dynamic `/robots.txt` granting search engine crawlers access to public routes while protecting internal dashboard, auth, and API routes.
+- **`src/app/sitemap.ts`**: Generated dynamic `/sitemap.xml` with priority weighting, change frequencies, and last-modified timestamps for all public pages.
+- **JSON-LD Schema Markup (`src/components/landing/json-ld.tsx`)**:
+  - Implemented `SoftwareApplication` structured schema with tier pricing specification, description, and author organization.
+  - Implemented `FAQPage` structured schema indexing all pre-expanded FAQ questions and answers directly for Google rich snippets.
+- **Metadata, Social & Canonicals (`src/app/layout.tsx`, `(auth)/login/layout.tsx`, `(auth)/signup/layout.tsx`, `privacy/page.tsx`, `terms/page.tsx`)**:
+  - Configured `metadataBase` with `https://portalize.site`.
+  - Added strict `alternates.canonical` across all pages to prevent duplicate index penalties.
+  - Added targeted freelancer keyword cluster.
+  - Added OpenGraph and Twitter card summary metadata with 1200x630px social image (`/og-image.png`).
+
+### Domain & Redirect Rules (`next.config.ts`)
+- Configured permanent (308) redirect from `www.portalize.site` to the apex canonical domain `https://portalize.site`.
+
+### Onboarding Empty States (Item 8)
+- **`/dashboard` (`src/app/(admin)/dashboard/page.tsx`)**: Replaced plain single-line text with an editorial dashed onboarding card featuring an icon tile, descriptive copy, and a 1-click `"Create your first portal"` CTA.
+- **`/dashboard/projects` (`src/app/(admin)/dashboard/projects/page.tsx`)**: Upgraded empty state to match the same high-conversion onboarding card.
+
+### Landing Page Call to Action & Pricing Note (Items 10 & 2)
+- **`src/components/landing/cta.tsx`**: Upgraded CTA section with high-converting urgency copy (*"Your next client delivery is one portal away"*), `"Start for free — 2 minutes"` CTA button, and a 4-item trust badge row (Free plan, $9/mo Pro, cancel anytime, multi-device support).
+- **`src/components/landing/pricing.tsx`**: Eliminated CountUp $0 flash bug by rendering static `$9`, and clarified *"Starter is free forever, no credit card required"*.
+- **`src/components/landing/faq.tsx`**: Converted accordion to multi-open and pre-expanded critical answers (unlock timing, watermarking, cancellation).
+- **Legal Pages (`src/app/privacy/page.tsx`, `src/app/terms/page.tsx`, `src/components/landing/footer.tsx`)**: Created clean Privacy Policy and Terms of Service pages and linked them in the footer.

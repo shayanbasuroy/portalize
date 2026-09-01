@@ -4,6 +4,9 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Terms of Service — Portalize",
   description: "Terms governing your use of the Portalize service.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 export default function TermsPage() {

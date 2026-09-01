@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
     // 10MB get truncated and the file arrives corrupted.
     proxyClientMaxBodySize: "50mb",
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.portalize.site" }],
+        destination: "https://portalize.site/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

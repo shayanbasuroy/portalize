@@ -95,9 +95,25 @@ export default async function ProjectsPage() {
           })}
         </div>
       ) : (
-        <div className="border-y border-dashed border-zinc-200 py-16 text-center">
-          <p className="text-sm text-zinc-500">
-            No projects found. Create your first project to get started.
+        <div className="border border-dashed border-zinc-200 p-12 text-center">
+          <span className="mx-auto flex size-12 items-center justify-center border border-zinc-200 bg-zinc-50 text-[#151B45]">
+            <FolderKanban className="size-5" strokeWidth={1.5} />
+          </span>
+          <h3 className="mt-4 text-base font-medium text-[#151B45]">
+            No projects yet
+          </h3>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-zinc-500">
+            Create your first project portal to upload deliverables, set a 4-digit PIN, and protect your files before payment.
+          </p>
+          <Link
+            href="/dashboard/projects/new"
+            className="mt-6 inline-flex items-center gap-2 bg-[#151B45] px-6 py-2.5 text-sm font-medium text-[#F8F7FC] transition-colors hover:bg-zinc-800"
+          >
+            <Plus className="size-4" />
+            Create your first portal
+          </Link>
+          <p className="mt-4 font-mono text-[11px] text-zinc-400">
+            Takes 2 minutes · 1 active portal free forever
           </p>
         </div>
       )}

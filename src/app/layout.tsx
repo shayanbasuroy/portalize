@@ -17,7 +17,20 @@ export const metadata: Metadata = {
   title: "Portalize | Zero-login client portals for freelancers",
   description:
     "Share project deliverables with clients through a private, zero-login portal. Preview, feedback, approvals, and payment-gated downloads.",
+  keywords: [
+    "client portal for freelancers",
+    "freelance client portal",
+    "deliverable preview",
+    "watermarked file preview",
+    "payment gated downloads",
+    "freelance escrow delivery",
+    "client approval portal",
+    "zero login client portal",
+  ],
   metadataBase: new URL("https://portalize.site"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Portalize — Stop sending Google Drive links like an amateur.",
     description:

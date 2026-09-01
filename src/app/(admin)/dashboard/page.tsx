@@ -165,9 +165,27 @@ export default async function DashboardPage() {
             ))}
           </div>
         ) : (
-          <p className="mt-4 border-t border-zinc-200 pt-4 text-sm text-zinc-500">
-            No projects yet. Create your first one to get started.
-          </p>
+          <div className="mt-4 border border-dashed border-zinc-200 p-10 text-center">
+            <span className="mx-auto flex size-12 items-center justify-center border border-zinc-200 bg-zinc-50 text-[#151B45]">
+              <FolderKanban className="size-5" strokeWidth={1.5} />
+            </span>
+            <h3 className="mt-4 text-base font-medium text-[#151B45]">
+              Create your first client portal
+            </h3>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-zinc-500">
+              Share deliverables behind a 4-digit PIN. Clients preview in-browser, and downloads unlock when your invoice clears.
+            </p>
+            <Link
+              href="/dashboard/projects/new"
+              className="mt-6 inline-flex items-center gap-2 bg-[#151B45] px-6 py-2.5 text-sm font-medium text-[#F8F7FC] transition-colors hover:bg-zinc-800"
+            >
+              <Plus className="size-4" />
+              Create your first portal
+            </Link>
+            <p className="mt-4 font-mono text-[11px] text-zinc-400">
+              Takes 2 minutes · No client accounts required
+            </p>
+          </div>
         )}
       </div>
     </div>

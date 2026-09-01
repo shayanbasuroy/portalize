@@ -10,11 +10,13 @@ import { Pricing } from "@/components/landing/pricing";
 import { Faq } from "@/components/landing/faq";
 import { Cta } from "@/components/landing/cta";
 import { Footer } from "@/components/landing/footer";
+import { JsonLd } from "@/components/landing/json-ld";
 
 export default function Home() {
   return (
     <MotionConfig reducedMotion="user">
       <main className="min-h-[100dvh] bg-[#F8F7FC] text-[#151B45] antialiased">
+        <JsonLd />
         <Header />
         <Hero />
         <Stats />

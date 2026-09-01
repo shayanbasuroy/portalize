@@ -11,11 +11,12 @@ export function Cta() {
       <div className="mx-auto max-w-6xl px-6 py-28 md:py-40">
         <div className="max-w-3xl">
           <Heading className="text-4xl font-medium leading-[1.02] tracking-[-0.03em] text-[#151B45] sm:text-5xl lg:text-6xl">
-            Ready to get paid before the files leave?
+            Your next client delivery is one portal away.
           </Heading>
           <Reveal delay={0.12}>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-zinc-600">
-              Create your first portal in minutes. Free to start — no credit card.
+              No credit card. No client accounts. Just one link, a 4-digit PIN, and
+              every file locked until payment clears.
             </p>
           </Reveal>
 
@@ -30,7 +31,7 @@ export function Cta() {
               href="/signup"
               className="group inline-flex items-center justify-center gap-2 bg-[#151B45] px-7 py-3.5 text-sm font-medium text-[#F8F7FC] transition-colors duration-150 ease-out hover:bg-zinc-800"
             >
-              Create your portal
+              Start for free — 2 minutes
               <motion.span
                 className="inline-flex"
                 animate={{ x: [0, 3, 0] }}
@@ -43,14 +44,23 @@ export function Cta() {
               href="/login"
               className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-medium text-[#151B45] transition-colors duration-150 ease-out hover:underline"
             >
-              Log in
+              Already have an account
             </Link>
           </motion.div>
 
           <Reveal delay={0.3}>
             <p className="mt-8 font-mono text-xs tracking-[0.04em] text-zinc-400">
-              No client accounts · 4-digit PIN · Watermarked previews
+              No client accounts · 4-digit PIN · Watermarked previews · Cancel anytime
             </p>
+          </Reveal>
+
+          <Reveal delay={0.38}>
+            <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] text-zinc-400">
+              <span>✓ Free plan, no card required</span>
+              <span>✓ Unlimited portals on Pro ($9/mo)</span>
+              <span>✓ Cancel anytime, no lock-in</span>
+              <span>✓ Works on any device for clients</span>
+            </div>
           </Reveal>
         </div>
       </div>
