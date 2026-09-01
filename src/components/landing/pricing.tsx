@@ -134,7 +134,8 @@ export function Pricing() {
 
         <Reveal delay={0.1}>
           <p className="mt-10 font-mono text-xs text-zinc-400">
-            Billed month to month. Cancel in one click.
+            Pro billed month to month — cancel in one click.
+            Starter is free forever, no credit card required.
           </p>
         </Reveal>
       </div>
