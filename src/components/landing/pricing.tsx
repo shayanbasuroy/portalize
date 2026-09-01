@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
-import { CountUp, EASE, Heading, Reveal } from "@/components/landing/reveal";
+import { EASE, Heading, Reveal } from "@/components/landing/reveal";
 
 type Plan = {
   name: string;
@@ -88,10 +88,9 @@ export function Pricing() {
               </div>
               <p className="mt-2 text-sm text-zinc-600">{plan.tagline}</p>
 
-              <div className="mt-6 flex items-baseline gap-2">
+              <div className="mt-6 flex items-baseline gap-1.5">
                 <span className="text-5xl font-medium tracking-tight text-[#151B45]">
-                  $
-                  <CountUp to={plan.price} duration={1.2} delay={i * 0.1 + 0.1} />
+                  ${plan.price}
                 </span>
                 <span className="text-sm text-zinc-500">{plan.period}</span>
               </div>

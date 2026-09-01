@@ -32,12 +32,22 @@ const items = [
   },
 ];
 
+// Indexes open by default: unlock timing (1), watermarking (2), cancellation (5)
+const DEFAULT_OPEN = new Set([1, 2, 5]);
+
 /**
  * A rule-divided accordion — questions hang from hairlines, not from a card.
- * Answers spring open with a height animation instead of a rigid grid toggle.
+ * Multiple items can be open simultaneously; critical answers pre-expanded.
  */
 export function Faq() {
-  const [open, setOpen] = useState(0);
+  const [open, setOpen] = useState<Set<number>>(new Set(DEFAULT_OPEN));
+
+  const toggle = (i: number) =>
+    setOpen((prev) => {
+      const next = new Set(prev);
+      next.has(i) ? next.delete(i) : next.add(i);
+      return next;
+    });
 
   return (
     <section id="faq" className="scroll-mt-16 border-t border-zinc-200">
@@ -53,7 +63,7 @@ export function Faq() {
 
         <div className="mt-12 border-t border-zinc-200">
           {items.map((item, i) => {
-            const isOpen = open === i;
+            const isOpen = open.has(i);
             return (
               <motion.div
                 key={item.q}
@@ -68,7 +78,7 @@ export function Faq() {
                     type="button"
                     aria-expanded={isOpen}
                     aria-controls={`faq-panel-${i}`}
-                    onClick={() => setOpen(isOpen ? -1 : i)}
+                    onClick={() => toggle(i)}
                     className="flex w-full items-center justify-between gap-6 py-5 text-left"
                   >
                     <span
