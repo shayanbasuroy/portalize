@@ -291,3 +291,10 @@ The following changes were implemented then reverted at user request (commit `89
 - Created new live/active $9.00 USD/month recurring subscription product (`pdt_0NmdkAeODCEeucC4gqJl7`) via Dodo Payments API.
 - Configured production webhook endpoint (`ep_3IiR0AU1REFI3ROMwQQj0ZRgj3v`) targeting `https://portalize.site/api/webhooks/dodo` with active signing secret `whsec_79ugAoRBTO3f3dw1X0X0j4LxCIzfBowJ`.
 - Synchronized `src/lib/dodo.ts` default product ID and `.env.local` credentials.
+
+### Live Mode Activated: Dodo Payments
+- Successfully connected to Dodo Payments in `live_mode` with the live API key.
+- Created live $9.00 USD/month recurring subscription product: `pdt_0Nmdkb0DW0H6z2KN4PDza`.
+- Registered live production webhook: `ep_3IiRH1fpot8La5eeInFmTWVnMBe` pointing to `https://portalize.site/api/webhooks/dodo`.
+- Retrieved live webhook secret: `whsec_nuAFR9IoUHfDieVwchFBIzrhU2Tz/n/Q`.
+- Synchronized `src/lib/dodo.ts` and `.env.local` to `live_mode`.
