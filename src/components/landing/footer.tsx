@@ -25,11 +25,12 @@ const columns = [
     ],
   },
   {
-    title: "Account",
+    title: "Resources",
     links: [
-      { href: "/signup", label: "Get started" },
-      { href: "/login", label: "Log in" },
-      { href: "/dashboard", label: "Dashboard" },
+      { href: "/guides", label: "All Guides" },
+      { href: "/guides/what-to-do-when-client-wont-pay-final-invoice", label: "Unpaid invoices" },
+      { href: "/guides/how-to-watermark-design-deliverables", label: "Watermarking" },
+      { href: "/guides/freelance-client-onboarding-delivery-checklist", label: "Delivery checklist" },
     ],
   },
   {
@@ -37,6 +38,8 @@ const columns = [
     links: [
       { href: "/privacy", label: "Privacy policy" },
       { href: "/terms", label: "Terms of service" },
+      { href: "/login", label: "Log in" },
+      { href: "/signup", label: "Get started" },
     ],
   },
 ];
