@@ -3,7 +3,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Terms of Service — Portalize",
-  description: "Terms governing your use of the Portalize service.",
+  description:
+    "Review the Portalize Terms of Service governing freelancer accounts, client deliverables, subscription billing, and acceptable use policies.",
   alternates: {
     canonical: "/terms",
   },

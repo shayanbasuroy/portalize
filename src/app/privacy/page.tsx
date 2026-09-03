@@ -3,7 +3,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Portalize",
-  description: "How Portalize collects, uses, and protects your data.",
+  description:
+    "Learn how Portalize collects, uses, and safeguards your personal data, deliverable files, and private client portal access securely.",
   alternates: {
     canonical: "/privacy",
   },

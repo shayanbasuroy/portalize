@@ -12,7 +12,18 @@ import { useSearchParams } from 'next/navigation'
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense
+      fallback={
+        <div className="space-y-1.5">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+            Welcome back
+          </h1>
+          <p className="text-sm text-zinc-500">
+            Enter your details to access your dashboard.
+          </p>
+        </div>
+      }
+    >
       <LoginForm />
     </Suspense>
   )

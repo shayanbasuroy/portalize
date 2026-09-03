@@ -68,9 +68,9 @@ export function PortalFigure() {
                   <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-zinc-400">
                     Acme Co. · Project
                   </p>
-                  <h3 className="mt-1.5 text-xl font-medium tracking-tight text-[#151B45]">
+                  <p className="mt-1.5 text-xl font-medium tracking-tight text-[#151B45]">
                     Brand identity &amp; website
-                  </h3>
+                  </p>
                 </div>
                 <span className="shrink-0 border border-zinc-200 px-2.5 py-1 font-mono text-[11px] text-zinc-500">
                   In review
