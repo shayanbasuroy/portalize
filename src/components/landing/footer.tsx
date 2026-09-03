@@ -9,10 +9,19 @@ const columns = [
   {
     title: "Product",
     links: [
-      { href: "#how-it-works", label: "How it works" },
-      { href: "#features", label: "Features" },
-      { href: "#pricing", label: "Pricing" },
-      { href: "#faq", label: "FAQ" },
+      { href: "/#how-it-works", label: "How it works" },
+      { href: "/#features", label: "Features" },
+      { href: "/#pricing", label: "Pricing" },
+      { href: "/features/payment-gated-downloads", label: "Payment gating" },
+    ],
+  },
+  {
+    title: "Solutions",
+    links: [
+      { href: "/for/designers", label: "For Designers" },
+      { href: "/for/developers", label: "For Developers" },
+      { href: "/alternatives/google-drive", label: "vs Google Drive" },
+      { href: "/alternatives/dubsado", label: "vs Dubsado" },
     ],
   },
   {
@@ -36,7 +45,7 @@ export function Footer() {
   return (
     <footer className="border-t border-zinc-200">
       <div className="mx-auto max-w-6xl px-6 py-16">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
