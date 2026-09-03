@@ -4,6 +4,37 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Shield, Lock, AlertTriangle } from
 import { Header } from "@/components/landing/header";
 import { Footer } from "@/components/landing/footer";
 
+const BASE = "https://www.portalize.site";
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "What to Do When a Client Won't Pay Your Final Invoice (Scripts & Strategy)",
+  description:
+    "Step-by-step recovery process when a freelance client refuses to pay the final 50% invoice. Copy-paste reminder email scripts, legal recourse, and how to gate deliverables with escrow.",
+  url: `${BASE}/guides/what-to-do-when-client-wont-pay-final-invoice`,
+  datePublished: "2026-09-01",
+  dateModified: "2026-09-03",
+  author: { "@type": "Organization", name: "Portalize", url: BASE },
+  publisher: {
+    "@type": "Organization",
+    name: "Portalize",
+    url: BASE,
+    logo: { "@type": "ImageObject", url: `${BASE}/icon.png` },
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/guides/what-to-do-when-client-wont-pay-final-invoice` },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: BASE },
+    { "@type": "ListItem", position: 2, name: "Guides", item: `${BASE}/guides` },
+    { "@type": "ListItem", position: 3, name: "What to Do When a Client Won't Pay", item: `${BASE}/guides/what-to-do-when-client-wont-pay-final-invoice` },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "What to Do When a Client Won't Pay Your Final Invoice (Templates & Prevention) | Portalize",
   description:
@@ -15,17 +46,20 @@ export const metadata: Metadata = {
     title: "What to Do When a Client Won't Pay Your Final Invoice | Portalize Guide",
     description:
       "A complete guide with copy-paste email templates to recover unpaid freelance milestone payments and prevent delivery theft.",
-    url: "https://portalize.site/guides/what-to-do-when-client-wont-pay-final-invoice",
+    url: "https://www.portalize.site/guides/what-to-do-when-client-wont-pay-final-invoice",
   },
 };
 
 export default function UnpaidInvoiceGuidePage() {
   return (
     <div className="min-h-screen bg-[#F8F7FC] text-[#151B45] antialiased flex flex-col">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Header />
 
       <main className="flex-1 pt-32 pb-24">
         <article className="mx-auto max-w-3xl px-6 py-12">
+
           {/* Breadcrumb */}
           <Link
             href="/guides"

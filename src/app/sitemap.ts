@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://portalize.site";
+  const baseUrl = "https://www.portalize.site";
   const lastModified = new Date();
 
   return [

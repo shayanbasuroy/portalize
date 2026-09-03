@@ -4,6 +4,37 @@ import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Header } from "@/components/landing/header";
 import { Footer } from "@/components/landing/footer";
 
+const BASE = "https://www.portalize.site";
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "The Zero-Friction Freelance Client Delivery & Handoff Checklist",
+  description:
+    "The complete checklist for freelance designers and developers. How to package deliverables, collect client feedback, and get paid before handing over root source files.",
+  url: `${BASE}/guides/freelance-client-onboarding-delivery-checklist`,
+  datePublished: "2026-09-01",
+  dateModified: "2026-09-03",
+  author: { "@type": "Organization", name: "Portalize", url: BASE },
+  publisher: {
+    "@type": "Organization",
+    name: "Portalize",
+    url: BASE,
+    logo: { "@type": "ImageObject", url: `${BASE}/icon.png` },
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/guides/freelance-client-onboarding-delivery-checklist` },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: BASE },
+    { "@type": "ListItem", position: 2, name: "Guides", item: `${BASE}/guides` },
+    { "@type": "ListItem", position: 3, name: "Freelance Client Delivery Checklist", item: `${BASE}/guides/freelance-client-onboarding-delivery-checklist` },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "The Zero-Friction Freelance Client Delivery & Handoff Checklist | Portalize",
   description:
@@ -15,7 +46,7 @@ export const metadata: Metadata = {
     title: "Freelance Client Delivery & Handoff Checklist | Portalize Guide",
     description:
       "A complete framework for smooth client project handoffs with zero password friction and guaranteed invoice protection.",
-    url: "https://portalize.site/guides/freelance-client-onboarding-delivery-checklist",
+    url: "https://www.portalize.site/guides/freelance-client-onboarding-delivery-checklist",
   },
 };
 
@@ -51,7 +82,10 @@ const checklistItems = [
 export default function ChecklistGuidePage() {
   return (
     <div className="min-h-screen bg-[#F8F7FC] text-[#151B45] antialiased flex flex-col">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Header />
+
 
       <main className="flex-1 pt-32 pb-24">
         <article className="mx-auto max-w-3xl px-6 py-12">

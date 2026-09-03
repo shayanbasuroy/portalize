@@ -4,6 +4,37 @@ import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Header } from "@/components/landing/header";
 import { Footer } from "@/components/landing/footer";
 
+const BASE = "https://www.portalize.site";
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "How to Watermark Design Deliverables (Figma, PDFs & Assets) Without Looking Amateur",
+  description:
+    "Learn how professional design studios protect client proofing mockups. How to apply automated canvas watermarks to Figma, PDF, and image deliverables before payment.",
+  url: `${BASE}/guides/how-to-watermark-design-deliverables`,
+  datePublished: "2026-09-01",
+  dateModified: "2026-09-03",
+  author: { "@type": "Organization", name: "Portalize", url: BASE },
+  publisher: {
+    "@type": "Organization",
+    name: "Portalize",
+    url: BASE,
+    logo: { "@type": "ImageObject", url: `${BASE}/icon.png` },
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/guides/how-to-watermark-design-deliverables` },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: BASE },
+    { "@type": "ListItem", position: 2, name: "Guides", item: `${BASE}/guides` },
+    { "@type": "ListItem", position: 3, name: "How to Watermark Design Deliverables", item: `${BASE}/guides/how-to-watermark-design-deliverables` },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "How to Watermark Design Deliverables (Figma, PDFs & Assets) Without Looking Amateur | Portalize",
   description:
@@ -15,14 +46,17 @@ export const metadata: Metadata = {
     title: "How to Watermark Design Deliverables | Portalize Guide",
     description:
       "A complete guide for freelance designers on watermarking client previews while maintaining high-end studio presentation.",
-    url: "https://portalize.site/guides/how-to-watermark-design-deliverables",
+    url: "https://www.portalize.site/guides/how-to-watermark-design-deliverables",
   },
 };
 
 export default function WatermarkGuidePage() {
   return (
     <div className="min-h-screen bg-[#F8F7FC] text-[#151B45] antialiased flex flex-col">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Header />
+
 
       <main className="flex-1 pt-32 pb-24">
         <article className="mx-auto max-w-3xl px-6 py-12">

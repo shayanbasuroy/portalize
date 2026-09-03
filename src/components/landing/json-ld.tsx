@@ -5,7 +5,7 @@ export function JsonLd() {
     name: "Portalize",
     applicationCategory: "BusinessApplication",
     operatingSystem: "All",
-    url: "https://portalize.site",
+    url: "https://www.portalize.site",
     description:
       "Zero-login client portal for freelancers. Share deliverables with 4-digit PIN access, watermarked in-browser previews, and invoice payment-gated downloads.",
     offers: [
@@ -28,7 +28,7 @@ export function JsonLd() {
     author: {
       "@type": "Organization",
       name: "Portalize",
-      url: "https://portalize.site",
+      url: "https://www.portalize.site",
     },
   };
 

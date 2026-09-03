@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: "Client Portal for Designers & Creative Studios | Portalize",
     description:
       "Share Figma frames, logos, and design assets with watermarked in-browser previews. High-res downloads unlock only when your invoice clears.",
-    url: "https://portalize.site/for/designers",
+    url: "https://www.portalize.site/for/designers",
   },
 };
 

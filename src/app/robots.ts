@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/dashboard", "/dashboard/*", "/api/*", "/auth/*"],
       },
     ],
-    sitemap: "https://portalize.site/sitemap.xml",
+    sitemap: "https://www.portalize.site/sitemap.xml",
   };
 }

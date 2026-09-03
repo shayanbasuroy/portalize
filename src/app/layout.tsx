@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     "client approval portal",
     "zero login client portal",
   ],
-  metadataBase: new URL("https://portalize.site"),
+  metadataBase: new URL("https://www.portalize.site"),
   alternates: {
     canonical: "/",
   },
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "Portalize — Stop sending Google Drive links like an amateur.",
     description:
       "Private client portals for freelancers. 1 link + 4-digit PIN. Watermarked previews. Downloads lock until the invoice is paid.",
-    url: "https://portalize.site",
+    url: "https://www.portalize.site",
     siteName: "Portalize",
     type: "website",
     images: [
