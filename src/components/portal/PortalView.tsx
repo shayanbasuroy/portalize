@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, Lock } from 'lucide-react'
 import { approveProjectAction } from '@/app/actions/portal'
 import { vibrate } from '@/lib/haptics'
+import { ContentProtection } from './ContentProtection'
 
 interface PortalViewProps {
   initialProject: any
@@ -50,6 +51,7 @@ export function PortalView({ initialProject, initialDeliverables }: PortalViewPr
   const isApproved = project.project_status === 'approved'
 
   return (
+    <ContentProtection isPaid={project.payment_status === 'paid'}>
     <div className="border border-zinc-200 bg-white">
       {/* Browser chrome */}
       <div className="flex items-center gap-2 border-b border-zinc-200 px-5 py-3">
@@ -258,5 +260,6 @@ export function PortalView({ initialProject, initialDeliverables }: PortalViewPr
         </p>
       </footer>
     </div>
+    </ContentProtection>
   )
 }

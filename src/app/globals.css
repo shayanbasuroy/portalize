@@ -277,3 +277,33 @@ html {
     -webkit-backdrop-filter: none !important;
   }
 }
+
+/* ============================================================
+   Content protection — portal pages
+   ============================================================ */
+
+/* Print protection: hide everything, show a message instead */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  body::after {
+    visibility: visible !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    font-family: var(--font-sans, system-ui, sans-serif);
+    font-size: 18px;
+    color: #151b45;
+    content: "This content is protected and cannot be printed.";
+  }
+}
+
+/* Images in the portal should not be draggable */
+[data-portal-protected] img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
